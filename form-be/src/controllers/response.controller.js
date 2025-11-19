@@ -5,9 +5,9 @@ import {
   deleteResponseFromStorage 
 } from '../services/storage.service.js';
 
-export const getResponses = (req, res) => {
+export const getResponses = async (req, res) => {
   try {
-    const responses = getResponsesFromStorage();
+    const responses = await getResponsesFromStorage();
     res.json(responses);
   } catch (error) {
     console.error('Error getting responses:', error);
@@ -15,10 +15,10 @@ export const getResponses = (req, res) => {
   }
 };
 
-export const getResponseById = (req, res) => {
+export const getResponseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = getResponseByIdFromStorage(id);
+    const response = await getResponseByIdFromStorage(id);
     
     if (!response) {
       return res.status(404).json({ error: 'Response not found' });
@@ -31,7 +31,7 @@ export const getResponseById = (req, res) => {
   }
 };
 
-export const addResponse = (req, res) => {
+export const addResponse = async (req, res) => {
   try {
     const { formId, data, email } = req.body;
 
@@ -39,15 +39,12 @@ export const addResponse = (req, res) => {
       return res.status(400).json({ error: 'formId and data are required' });
     }
 
-    const newResponse = {
-      id: Date.now().toString(),
+    const newResponse = await addResponseToStorage({
       formId,
       data,
       email: email || null,
-      submittedAt: Date.now(),
-    };
+    });
 
-    addResponseToStorage(newResponse);
     res.status(201).json({ 
       message: 'Response submitted successfully', 
       response: newResponse 
@@ -58,10 +55,10 @@ export const addResponse = (req, res) => {
   }
 };
 
-export const deleteResponse = (req, res) => {
+export const deleteResponse = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted = deleteResponseFromStorage(id);
+    const deleted = await deleteResponseFromStorage(id);
     
     if (!deleted) {
       return res.status(404).json({ error: 'Response not found' });

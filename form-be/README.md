@@ -16,6 +16,28 @@ npm install
    - `ADMIN_PASSWORD`: Password admin
    - `JWT_SECRET`: Secret key untuk JWT
    - `CORS_ORIGIN`: Origin yang diizinkan untuk CORS
+   - `MONGODB_URI`: MongoDB connection string
+
+### Setup MongoDB
+
+**Opsi 1: MongoDB Local**
+```bash
+# Install MongoDB Community Edition
+# Windows: https://www.mongodb.com/try/download/community
+# Mac: brew install mongodb-community
+# Linux: sudo apt-get install mongodb
+
+# Start MongoDB service
+# Windows: net start MongoDB
+# Mac/Linux: brew services start mongodb-community
+# atau: sudo systemctl start mongod
+```
+
+**Opsi 2: MongoDB Atlas (Cloud)**
+1. Buat akun di [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Buat cluster baru
+3. Dapatkan connection string
+4. Update `MONGODB_URI` di `.env`
 
 ## Menjalankan Server
 

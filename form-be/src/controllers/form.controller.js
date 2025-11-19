@@ -1,8 +1,8 @@
 import { getFormConfigFromStorage, saveFormConfigToStorage, getDefaultFormConfig } from '../services/storage.service.js';
 
-export const getFormConfig = (req, res) => {
+export const getFormConfig = async (req, res) => {
   try {
-    const config = getFormConfigFromStorage();
+    const config = await getFormConfigFromStorage();
     res.json(config);
   } catch (error) {
     console.error('Error getting form config:', error);
@@ -10,7 +10,7 @@ export const getFormConfig = (req, res) => {
   }
 };
 
-export const updateFormConfig = (req, res) => {
+export const updateFormConfig = async (req, res) => {
   try {
     const config = req.body;
     
@@ -19,12 +19,7 @@ export const updateFormConfig = (req, res) => {
       return res.status(400).json({ error: 'Invalid form configuration' });
     }
 
-    const updatedConfig = {
-      ...config,
-      updatedAt: Date.now(),
-    };
-
-    saveFormConfigToStorage(updatedConfig);
+    const updatedConfig = await saveFormConfigToStorage(config);
     res.json({ message: 'Form configuration updated successfully', config: updatedConfig });
   } catch (error) {
     console.error('Error updating form config:', error);
@@ -32,16 +27,16 @@ export const updateFormConfig = (req, res) => {
   }
 };
 
-export const initializeFormConfig = (req, res) => {
+export const initializeFormConfig = async (req, res) => {
   try {
-    const existing = getFormConfigFromStorage();
+    const existing = await getFormConfigFromStorage();
     if (existing) {
       return res.json(existing);
     }
 
     const defaultConfig = getDefaultFormConfig();
-    saveFormConfigToStorage(defaultConfig);
-    res.json(defaultConfig);
+    const savedConfig = await saveFormConfigToStorage(defaultConfig);
+    res.json(savedConfig);
   } catch (error) {
     console.error('Error initializing form config:', error);
     res.status(500).json({ error: 'Failed to initialize form configuration' });

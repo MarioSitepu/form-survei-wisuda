@@ -1,40 +1,41 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.join(__dirname, '../data');
-const FORM_CONFIG_FILE = path.join(DATA_DIR, 'form-config.json');
-const RESPONSES_FILE = path.join(DATA_DIR, 'responses.json');
-
-// Ensure data directory exists
-try {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-} catch (error) {
-  console.error('Error creating data directory:', error);
-}
+import FormConfig from '../models/FormConfig.model.js';
+import Response from '../models/Response.model.js';
 
 // Form Config Storage
-export const getFormConfigFromStorage = () => {
+export const getFormConfigFromStorage = async () => {
   try {
-    const data = fs.readFileSync(FORM_CONFIG_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      return null;
+    let config = await FormConfig.findOne({ id: 'default-form' });
+    
+    if (!config) {
+      // Create default config if it doesn't exist
+      config = await FormConfig.create(getDefaultFormConfig());
     }
+    
+    return config.toObject();
+  } catch (error) {
+    console.error('Error getting form config:', error);
     throw error;
   }
 };
 
-export const saveFormConfigToStorage = (config) => {
+export const saveFormConfigToStorage = async (configData) => {
   try {
-    fs.writeFileSync(FORM_CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+    const config = await FormConfig.findOneAndUpdate(
+      { id: configData.id || 'default-form' },
+      {
+        ...configData,
+        updatedAt: Date.now()
+      },
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true
+      }
+    );
+    
+    return config.toObject();
   } catch (error) {
+    console.error('Error saving form config:', error);
     throw error;
   }
 };
@@ -91,52 +92,68 @@ export const getDefaultFormConfig = () => {
 };
 
 // Responses Storage
-export const getResponsesFromStorage = () => {
+export const getResponsesFromStorage = async () => {
   try {
-    const data = fs.readFileSync(RESPONSES_FILE, 'utf-8');
-    return JSON.parse(data);
+    const responses = await Response.find({}).sort({ submittedAt: -1 });
+    return responses.map(r => ({
+      id: r._id.toString(),
+      formId: r.formId,
+      data: r.data,
+      email: r.email,
+      submittedAt: r.submittedAt
+    }));
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      return [];
-    }
+    console.error('Error getting responses:', error);
     throw error;
   }
 };
 
-export const addResponseToStorage = (response) => {
+export const addResponseToStorage = async (responseData) => {
   try {
-    const responses = getResponsesFromStorage();
-    responses.push(response);
-    fs.writeFileSync(RESPONSES_FILE, JSON.stringify(responses, null, 2), 'utf-8');
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getResponseByIdFromStorage = (id) => {
-  try {
-    const responses = getResponsesFromStorage();
-    return responses.find(r => r.id === id) || null;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const deleteResponseFromStorage = (id) => {
-  try {
-    const responses = getResponsesFromStorage();
-    const index = responses.findIndex(r => r.id === id);
+    const response = await Response.create({
+      formId: responseData.formId,
+      data: responseData.data,
+      email: responseData.email || null,
+      submittedAt: Date.now()
+    });
     
-    if (index === -1) {
-      return false;
-    }
-    
-    responses.splice(index, 1);
-    fs.writeFileSync(RESPONSES_FILE, JSON.stringify(responses, null, 2), 'utf-8');
-    return true;
+    return {
+      id: response._id.toString(),
+      formId: response.formId,
+      data: response.data,
+      email: response.email,
+      submittedAt: response.submittedAt
+    };
   } catch (error) {
+    console.error('Error adding response:', error);
     throw error;
   }
 };
 
+export const getResponseByIdFromStorage = async (id) => {
+  try {
+    const response = await Response.findById(id);
+    if (!response) return null;
+    
+    return {
+      id: response._id.toString(),
+      formId: response.formId,
+      data: response.data,
+      email: response.email,
+      submittedAt: response.submittedAt
+    };
+  } catch (error) {
+    console.error('Error getting response by ID:', error);
+    throw error;
+  }
+};
+
+export const deleteResponseFromStorage = async (id) => {
+  try {
+    const result = await Response.findByIdAndDelete(id);
+    return !!result;
+  } catch (error) {
+    console.error('Error deleting response:', error);
+    throw error;
+  }
+};

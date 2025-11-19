@@ -16,8 +16,9 @@ dynamic-form-application/
     │   ├── routes/
     │   ├── controllers/
     │   ├── services/
+    │   ├── models/      # MongoDB models
+    │   ├── config/      # Configuration files
     │   └── middleware/
-    └── data/         # JSON storage files
 ```
 
 ## Quick Start
@@ -49,6 +50,11 @@ NODE_ENV=development
 ADMIN_PASSWORD=admin123
 JWT_SECRET=your-secret-key-change-in-production
 CORS_ORIGIN=http://localhost:5173
+
+# MongoDB Connection
+MONGODB_URI=mongodb://localhost:27017/dynamic-form-app
+# atau untuk MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dynamic-form-app
 ```
 
 **Frontend (form-fe/.env):**
@@ -95,8 +101,8 @@ npm run dev
 ### Backend
 - Node.js
 - Express.js
+- MongoDB dengan Mongoose
 - JWT Authentication
-- File-based storage (JSON)
 
 ## API Endpoints
 
@@ -134,9 +140,27 @@ Token didapatkan dari endpoint `/api/admin/login`.
 
 ## Data Storage
 
-Data disimpan dalam file JSON di `form-be/data/`:
-- `form-config.json` - Form configuration
-- `responses.json` - Form responses
+Data disimpan di MongoDB:
+- **Database**: `dynamic-form-app`
+- **Collections**:
+  - `formconfigs` - Form configuration
+  - `responses` - Form responses
+
+### Setup MongoDB
+
+**Opsi 1: MongoDB Local**
+1. Install MongoDB Community Edition dari [mongodb.com](https://www.mongodb.com/try/download/community)
+2. Start MongoDB service:
+   - Windows: `net start MongoDB`
+   - Mac: `brew services start mongodb-community`
+   - Linux: `sudo systemctl start mongod`
+3. MongoDB akan berjalan di `mongodb://localhost:27017`
+
+**Opsi 2: MongoDB Atlas (Cloud)**
+1. Buat akun di [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Buat cluster baru (gratis)
+3. Dapatkan connection string
+4. Update `MONGODB_URI` di `.env`
 
 ## Development Scripts
 
