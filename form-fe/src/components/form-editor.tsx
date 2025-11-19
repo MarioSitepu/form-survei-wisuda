@@ -16,11 +16,44 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
     type: 'text',
     required: false,
   });
+  
+  // Initialize options array when type changes to radio/checkbox/select
+  const handleTypeChange = (type: string) => {
+    const needsOptions = type === 'select' || type === 'radio' || type === 'checkbox';
+    if (needsOptions) {
+      // If switching to a type that needs options, initialize with 1 empty option if not already set
+      const currentOptions = newField.options && Array.isArray(newField.options) && newField.options.length > 0 
+        ? newField.options 
+        : [''];
+      setNewField({ 
+        ...newField, 
+        type: type as any,
+        options: currentOptions
+      });
+    } else {
+      // If switching away from options type, clear options
+      setNewField({ 
+        ...newField, 
+        type: type as any,
+        options: undefined
+      });
+    }
+  };
 
   const handleAddField = () => {
     if (!newField.name || !newField.label) {
       alert('Please fill in name and label');
       return;
+    }
+
+    // Process options - filter out empty strings
+    let processedOptions: string[] = [];
+    if (newField.options) {
+      if (Array.isArray(newField.options)) {
+        processedOptions = newField.options.filter((o) => o.trim());
+      } else if (typeof newField.options === 'string') {
+        processedOptions = newField.options.split('\n').filter((o) => o.trim());
+      }
     }
 
     const field: FormField = {
@@ -30,11 +63,11 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
       type: newField.type as any,
       required: newField.required || false,
       placeholder: newField.placeholder,
-      options: newField.options?.split('\n').filter((o) => o.trim()) || [],
+      options: processedOptions.length > 0 ? processedOptions : undefined,
     };
 
     setFields([...fields, field]);
-    setNewField({ type: 'text', required: false });
+    setNewField({ type: 'text', required: false, options: undefined });
   };
 
   const handleDeleteField = (fieldId: string) => {
@@ -197,7 +230,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">Field Type</label>
               <select
                 value={newField.type || 'text'}
-                onChange={(e) => setNewField({ ...newField, type: e.target.value as any })}
+                onChange={(e) => handleTypeChange(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
               >
                 <option value="text">Text</option>
@@ -235,14 +268,103 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
           {(newField.type === 'select' || newField.type === 'radio' || newField.type === 'checkbox') && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Options (one per line)</label>
-              <textarea
-                value={newField.options?.join('\n') || ''}
-                onChange={(e) => setNewField({ ...newField, options: e.target.value.split('\n') })}
-                rows={3}
-                placeholder="Option 1&#10;Option 2&#10;Option 3"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 resize-none transition-all duration-200"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-3">Options</label>
+              <div className="space-y-2">
+                {Array.isArray(newField.options) && newField.options.length > 0 ? (
+                  newField.options.map((option, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg bg-gray-50 hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200">
+                      {/* Angka urutan di kiri */}
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-md flex-shrink-0">
+                        {index + 1}
+                      </div>
+                      
+                      {/* Input opsi */}
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) => {
+                          const updatedOptions = [...(newField.options as string[])];
+                          updatedOptions[index] = e.target.value;
+                          setNewField({ ...newField, options: updatedOptions });
+                        }}
+                        placeholder={`Option ${index + 1}`}
+                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                      />
+                      
+                      {/* Tombol tambah dan kurang di kanan */}
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {/* Tombol tambah */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updatedOptions = [...(newField.options as string[])];
+                            updatedOptions.splice(index + 1, 0, '');
+                            setNewField({ ...newField, options: updatedOptions });
+                          }}
+                          className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 transition-all duration-200 flex items-center justify-center group"
+                          title="Tambah opsi setelah ini"
+                        >
+                          <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                          </svg>
+                        </button>
+                        
+                        {/* Tombol kurang (hapus) - hanya tampil jika lebih dari 1 opsi */}
+                        {newField.options.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updatedOptions = [...(newField.options as string[])];
+                              updatedOptions.splice(index, 1);
+                              setNewField({ ...newField, options: updatedOptions.length > 0 ? updatedOptions : [''] });
+                            }}
+                            className="w-8 h-8 rounded-lg bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100 hover:border-red-300 transition-all duration-200 flex items-center justify-center group"
+                            title="Hapus opsi ini"
+                          >
+                            <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg bg-gray-50">
+                    {/* Angka urutan di kiri */}
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-md flex-shrink-0">
+                      1
+                    </div>
+                    
+                    {/* Input opsi */}
+                    <input
+                      type="text"
+                      value=""
+                      onChange={(e) => {
+                        setNewField({ ...newField, options: [e.target.value] });
+                      }}
+                      placeholder="Option 1"
+                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                    />
+                    
+                    {/* Tombol tambah di kanan */}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNewField({ ...newField, options: ['', ''] });
+                        }}
+                        className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 transition-all duration-200 flex items-center justify-center group"
+                        title="Tambah opsi"
+                      >
+                        <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

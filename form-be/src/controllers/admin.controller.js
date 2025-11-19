@@ -21,7 +21,7 @@ export const login = (req, res) => {
     const token = jwt.sign(
       { admin: true, timestamp: Date.now() },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '7d' }
     );
 
     activeSessions.add(token);
@@ -29,7 +29,7 @@ export const login = (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      expiresIn: '24h'
+      expiresIn: '7d'
     });
   } catch (error) {
     console.error('Error during login:', error);

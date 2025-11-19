@@ -160,7 +160,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'responses' && <ResponsesTable responses={responses} />}
+        {activeTab === 'responses' && <ResponsesTable responses={responses} config={formConfig} />}
         {activeTab === 'analytics' && <ResponsesAnalytics responses={responses} config={formConfig} />}
         {activeTab === 'users' && <UsersList responses={responses} />}
         {activeTab === 'form-editor' && formConfig && (

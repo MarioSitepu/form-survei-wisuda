@@ -48,13 +48,19 @@ npm install --legacy-peer-deps
 PORT=3001
 NODE_ENV=development
 ADMIN_PASSWORD=admin123
-JWT_SECRET=your-secret-key-change-in-production
+JWT_SECRET=b587e1e6a382b53fc9e2444a20088c5b641eb0b5d0e2d0e23ddb2e08c8123e0b30a456272bc8e9d179a8e52e88ff9216a959aac7fce42e15e677679cc577d8fa
 CORS_ORIGIN=http://localhost:5173
 
 # MongoDB Connection
 MONGODB_URI=mongodb://localhost:27017/dynamic-form-app
 # atau untuk MongoDB Atlas:
 # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dynamic-form-app
+```
+
+**Generate JWT Secret baru:**
+```bash
+cd form-be
+npm run generate:jwt-secret
 ```
 
 **Frontend (form-fe/.env):**

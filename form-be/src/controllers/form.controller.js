@@ -3,6 +3,9 @@ import { getFormConfigFromStorage, saveFormConfigToStorage, getDefaultFormConfig
 export const getFormConfig = async (req, res) => {
   try {
     const config = await getFormConfigFromStorage();
+    if (!config) {
+      return res.status(404).json({ error: 'Form configuration not found' });
+    }
     res.json(config);
   } catch (error) {
     console.error('Error getting form config:', error);

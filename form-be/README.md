@@ -14,9 +14,14 @@ npm install
 2. Edit `.env` sesuai kebutuhan:
    - `PORT`: Port server (default: 3001)
    - `ADMIN_PASSWORD`: Password admin
-   - `JWT_SECRET`: Secret key untuk JWT
+   - `JWT_SECRET`: Secret key untuk JWT (generate dengan `npm run generate:jwt-secret`)
    - `CORS_ORIGIN`: Origin yang diizinkan untuk CORS
    - `MONGODB_URI`: MongoDB connection string
+
+**Generate JWT Secret:**
+```bash
+npm run generate:jwt-secret
+```
 
 ### Setup MongoDB
 
@@ -81,5 +86,5 @@ Admin endpoints memerlukan JWT token di header:
 Authorization: Bearer <token>
 ```
 
-Token didapatkan dari endpoint `/api/admin/login`.
+Token didapatkan dari endpoint `/api/admin/login` dan berlaku selama **7 hari**.
 

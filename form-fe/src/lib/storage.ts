@@ -30,16 +30,32 @@ export type FormResponse = {
 // Initialize default form config
 export const initializeFormConfig = async (): Promise<FormConfig> => {
   try {
+    // Try to get existing config
     const config = await formAPI.getConfig();
-    if (config) return config;
+    if (config && config.fields && config.fields.length > 0) {
+      return config;
+    }
     
-    // If no config exists, initialize default
-    const defaultConfig = await formAPI.initializeConfig();
-    return defaultConfig;
-  } catch (error) {
-    console.error('Error initializing form config:', error);
-    // Return default config if API fails
-    return getDefaultFormConfig();
+    // If no config exists or config is empty, initialize default
+    try {
+      const defaultConfig = await formAPI.initializeConfig();
+      return defaultConfig;
+    } catch (initError: any) {
+      console.error('Error initializing default config:', initError);
+      // If initialization fails, return fallback config
+      return getDefaultFormConfig();
+    }
+  } catch (error: any) {
+    console.error('Error loading form config:', error);
+    // If API fails completely, try to initialize default
+    try {
+      const defaultConfig = await formAPI.initializeConfig();
+      return defaultConfig;
+    } catch (initError: any) {
+      // Last resort: return fallback config
+      console.warn('Using fallback form config');
+      return getDefaultFormConfig();
+    }
   }
 };
 

@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// Use proxy in development, or direct URL in production
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '/api' : 'http://localhost:3001/api');
 
 // Helper function for API calls
 async function apiCall(endpoint: string, options: RequestInit = {}) {
@@ -13,22 +14,40 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Network error' }));
-    throw new Error(error.error || `HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Network error' }));
+      throw new Error(error.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error: any) {
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error(`Cannot connect to backend server at ${API_BASE_URL}. Please make sure the backend is running.`);
+    }
+    throw error;
   }
-
-  return response.json();
 }
 
 // Form API
 export const formAPI = {
-  getConfig: () => apiCall('/form'),
+  getConfig: async () => {
+    try {
+      return await apiCall('/form');
+    } catch (error: any) {
+      // If 404, return null to trigger initialization
+      if (error.message.includes('404') || error.message.includes('not found')) {
+        return null;
+      }
+      throw error;
+    }
+  },
   updateConfig: (config: any) => apiCall('/form', {
     method: 'PUT',
     body: JSON.stringify(config),

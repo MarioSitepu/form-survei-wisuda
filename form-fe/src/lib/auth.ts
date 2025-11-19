@@ -7,7 +7,7 @@ export const setAdminSession = async (password: string): Promise<string> => {
     const result = await adminAPI.login(password);
     if (result.token) {
       localStorage.setItem('adminToken', result.token);
-      localStorage.setItem('adminSessionExpiry', (Date.now() + 86400000).toString()); // 24 hours
+      localStorage.setItem('adminSessionExpiry', (Date.now() + 604800000).toString()); // 7 days (7 * 24 * 60 * 60 * 1000)
       return result.token;
     }
     throw new Error('No token received');
