@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DynamicForm } from '@/components/dynamic-form';
-import { FormConfig, initializeFormConfig } from '@/lib/storage';
+import { FormConfig, getPrimaryFormConfig } from '@/lib/storage';
 
 export default function Home() {
   const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
@@ -11,8 +11,14 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     try {
-      const config = await initializeFormConfig();
-      setFormConfig(config);
+      const config = await getPrimaryFormConfig();
+      // Check if form is archived
+      if (config.isArchived) {
+        setError('Form ini telah diarsipkan dan tidak dapat diisi.');
+        setFormConfig(null);
+      } else {
+        setFormConfig(config);
+      }
     } catch (error: any) {
       console.error('Error loading form config:', error);
       setError(error.message || 'Failed to load form. Please try again later.');

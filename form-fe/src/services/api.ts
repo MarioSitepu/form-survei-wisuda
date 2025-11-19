@@ -37,6 +37,19 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
 
 // Form API
 export const formAPI = {
+  // Get primary form (for home page)
+  getPrimaryForm: async () => {
+    try {
+      return await apiCall('/form/primary');
+    } catch (error: any) {
+      // If 404, return null to trigger initialization
+      if (error.message.includes('404') || error.message.includes('not found')) {
+        return null;
+      }
+      throw error;
+    }
+  },
+  // Get form config (backward compatibility)
   getConfig: async () => {
     try {
       return await apiCall('/form');
@@ -48,9 +61,37 @@ export const formAPI = {
       throw error;
     }
   },
+  // Get all forms (admin only)
+  getAllForms: () => apiCall('/form/all'),
+  // Get form by ID (admin only)
+  getFormById: (id: string) => apiCall(`/form/${id}`),
+  // Create new form (admin only)
+  createForm: (formData: any) => apiCall('/form/new', {
+    method: 'POST',
+    body: JSON.stringify(formData),
+  }),
+  // Update form config (backward compatibility)
   updateConfig: (config: any) => apiCall('/form', {
     method: 'PUT',
     body: JSON.stringify(config),
+  }),
+  // Update form by ID (admin only)
+  updateForm: (id: string, formData: any) => apiCall(`/form/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(formData),
+  }),
+  // Set form as primary (admin only)
+  setPrimaryForm: (id: string) => apiCall(`/form/${id}/set-primary`, {
+    method: 'PUT',
+  }),
+  // Archive/unarchive form (admin only)
+  archiveForm: (id: string, isArchived: boolean) => apiCall(`/form/${id}/archive`, {
+    method: 'PUT',
+    body: JSON.stringify({ isArchived }),
+  }),
+  // Delete form (admin only)
+  deleteForm: (id: string) => apiCall(`/form/${id}`, {
+    method: 'DELETE',
   }),
   initializeConfig: () => apiCall('/form/initialize', {
     method: 'POST',

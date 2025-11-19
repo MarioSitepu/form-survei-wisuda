@@ -12,6 +12,9 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Check if form is archived
+  const isArchived = config.isArchived === true;
 
   const handleChange = (fieldName: string, value: any) => {
     setFormData((prev) => ({
@@ -394,6 +397,27 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
     }
   };
 
+  // If form is archived, show message instead of form
+  if (isArchived) {
+    return (
+      <div className="w-full animate-fade-in" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Form Telah Diarsipkan</h2>
+            <p className="text-gray-600">
+              Form ini telah diarsipkan dan tidak dapat diisi lagi.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full animate-fade-in" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
       {/* Header Card - Enhanced Design */}
@@ -408,6 +432,11 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
             <h1 className="text-3xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '28px', fontWeight: 500 }}>
               {config.title || 'Untitled Form'}
             </h1>
+            {config.isPrimary && (
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                Primary
+              </span>
+            )}
           </div>
           {config.description && (
             <p className="text-[#5f6368] mt-3 ml-[52px]" style={{ fontSize: '15px', lineHeight: '22px' }}>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { FormConfig, FormResponse, getFormResponses, initializeFormConfig } from '@/lib/storage';
 import FormEditor from './form-editor';
+import FormManagement from './form-management';
 import ResponsesTable from './responses-table';
 import ResponsesAnalytics from './responses-analytics';
 import UsersList from './users-list';
 
-type TabType = 'responses' | 'analytics' | 'users' | 'form-editor';
+type TabType = 'responses' | 'analytics' | 'users' | 'form-editor' | 'form-management';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -142,6 +143,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             { id: 'responses', label: 'All Responses', icon: '📋' },
             { id: 'analytics', label: 'Analytics', icon: '📊' },
             { id: 'users', label: 'Users', icon: '👥' },
+            { id: 'form-management', label: 'Form Management', icon: '📝' },
             { id: 'form-editor', label: 'Edit Form', icon: '✏️' },
           ].map((tab) => (
             <button
@@ -163,6 +165,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         {activeTab === 'responses' && <ResponsesTable responses={responses} config={formConfig} />}
         {activeTab === 'analytics' && <ResponsesAnalytics responses={responses} config={formConfig} />}
         {activeTab === 'users' && <UsersList responses={responses} />}
+        {activeTab === 'form-management' && (
+          <FormManagement onUpdate={handleFormUpdate} />
+        )}
         {activeTab === 'form-editor' && formConfig && (
           <FormEditor config={formConfig} onUpdate={handleFormUpdate} />
         )}

@@ -19,6 +19,8 @@ const FormConfigSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   fields: [FormFieldSchema],
+  isPrimary: { type: Boolean, default: false },
+  isArchived: { type: Boolean, default: false },
   createdAt: { type: Number, default: Date.now },
   updatedAt: { type: Number, default: Date.now }
 }, {

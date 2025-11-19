@@ -15,6 +15,8 @@ export type FormConfig = {
   title: string;
   description: string;
   fields: FormField[];
+  isPrimary?: boolean;
+  isArchived?: boolean;
   createdAt: number;
   updatedAt: number;
 };
@@ -27,16 +29,26 @@ export type FormResponse = {
   submittedAt: number;
 };
 
-// Initialize default form config
-export const initializeFormConfig = async (): Promise<FormConfig> => {
+// Get primary form config (for home page)
+export const getPrimaryFormConfig = async (): Promise<FormConfig> => {
   try {
-    // Try to get existing config
-    const config = await formAPI.getConfig();
+    // Try to get primary form
+    const config = await formAPI.getPrimaryForm();
     if (config && config.fields && config.fields.length > 0) {
       return config;
     }
     
-    // If no config exists or config is empty, initialize default
+    // If no primary form exists, try to get any form
+    try {
+      const fallbackConfig = await formAPI.getConfig();
+      if (fallbackConfig && fallbackConfig.fields && fallbackConfig.fields.length > 0) {
+        return fallbackConfig;
+      }
+    } catch (e) {
+      // Ignore error, continue to initialization
+    }
+    
+    // If no config exists, initialize default
     try {
       const defaultConfig = await formAPI.initializeConfig();
       return defaultConfig;
@@ -46,7 +58,7 @@ export const initializeFormConfig = async (): Promise<FormConfig> => {
       return getDefaultFormConfig();
     }
   } catch (error: any) {
-    console.error('Error loading form config:', error);
+    console.error('Error loading primary form config:', error);
     // If API fails completely, try to initialize default
     try {
       const defaultConfig = await formAPI.initializeConfig();
@@ -57,6 +69,11 @@ export const initializeFormConfig = async (): Promise<FormConfig> => {
       return getDefaultFormConfig();
     }
   }
+};
+
+// Initialize default form config (backward compatibility)
+export const initializeFormConfig = async (): Promise<FormConfig> => {
+  return getPrimaryFormConfig();
 };
 
 // Get default form config (fallback)
@@ -132,12 +149,23 @@ export const addFormResponse = async (response: Omit<FormResponse, 'id' | 'submi
   }
 };
 
-// Update form config
+// Update form config (backward compatibility)
 export const updateFormConfig = async (config: FormConfig): Promise<void> => {
   try {
     await formAPI.updateConfig(config);
   } catch (error) {
     console.error('Error updating form config:', error);
+    throw error;
+  }
+};
+
+// Update form by ID
+export const updateFormById = async (formId: string, config: Partial<FormConfig>): Promise<FormConfig> => {
+  try {
+    const result = await formAPI.updateForm(formId, config);
+    return result.form;
+  } catch (error) {
+    console.error('Error updating form:', error);
     throw error;
   }
 };

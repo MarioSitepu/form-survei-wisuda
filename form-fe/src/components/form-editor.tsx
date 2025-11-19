@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FormConfig, FormField, updateFormConfig } from '@/lib/storage';
+import { FormConfig, FormField, updateFormConfig, updateFormById } from '@/lib/storage';
 
 interface FormEditorProps {
   config: FormConfig;
@@ -79,20 +79,28 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
   const handleSave = async () => {
     try {
-      const updatedConfig: FormConfig = {
-        ...config,
+      const updatedConfig: Partial<FormConfig> = {
         title,
         description,
         fields,
       };
 
-      await updateFormConfig(updatedConfig);
+      // Use updateFormById if available, otherwise fallback to updateFormConfig
+      if (config.id) {
+        await updateFormById(config.id, updatedConfig);
+      } else {
+        await updateFormConfig({
+          ...config,
+          ...updatedConfig,
+        } as FormConfig);
+      }
+      
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
       onUpdate();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving form config:', error);
-      alert('Error saving form configuration');
+      alert(error.message || 'Error saving form configuration');
     }
   };
 
