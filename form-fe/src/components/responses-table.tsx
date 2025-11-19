@@ -44,24 +44,103 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
 
   const fieldNames = Array.from(allFieldNames).sort();
 
+  // Export to Excel function (CSV format that Excel can open)
+  const exportToExcel = () => {
+    if (filteredResponses.length === 0) {
+      alert('Tidak ada data untuk diekspor');
+      return;
+    }
+
+    // Prepare CSV data
+    const headers = ['Email', 'Submitted At', ...fieldNames.map(name => getFieldLabel(name))];
+    const rows = filteredResponses.map(response => {
+      const row = [
+        response.email || '-',
+        new Date(response.submittedAt).toLocaleString('id-ID', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }),
+        ...fieldNames.map(fieldName => {
+          const value = response.data[fieldName];
+          if (value === null || value === undefined || value === '') {
+            return '-';
+          }
+          if (Array.isArray(value)) {
+            return value.join('; ');
+          }
+          if (typeof value === 'boolean') {
+            return value ? 'Ya' : 'Tidak';
+          }
+          if (typeof value === 'object') {
+            return JSON.stringify(value);
+          }
+          return String(value);
+        })
+      ];
+      return row;
+    });
+
+    // Convert to CSV with proper escaping
+    const escapeCSV = (cell: any): string => {
+      const cellValue = String(cell);
+      // If cell contains comma, quote, or newline, wrap in quotes and escape quotes
+      if (cellValue.includes(',') || cellValue.includes('"') || cellValue.includes('\n')) {
+        return `"${cellValue.replace(/"/g, '""')}"`;
+      }
+      return cellValue;
+    };
+
+    const csvContent = [
+      headers.map(escapeCSV).join(','),
+      ...rows.map(row => row.map(escapeCSV).join(','))
+    ].join('\n');
+
+    // Add BOM for UTF-8 to support special characters in Excel
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // Create download link
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    const formTitle = config?.title || 'Form';
+    const sanitizedTitle = formTitle.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
+    const dateStr = new Date().toISOString().split('T')[0];
+    const fileName = `responses_${sanitizedTitle}_${dateStr}.csv`;
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
       <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '20px', fontWeight: 600 }}>
+                All Form Responses ({filteredResponses.length})
+                {config && (
+                  <span className="ml-2 text-sm font-normal text-gray-600">
+                    - {config.title}
+                  </span>
+                )}
+              </h2>
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '20px', fontWeight: 600 }}>
-              All Form Responses ({filteredResponses.length})
-              {config && (
-                <span className="ml-2 text-sm font-normal text-gray-600">
-                  - {config.title}
-                </span>
-              )}
-            </h2>
+          <div className="flex items-center gap-3">
             {config && (
               <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,6 +148,17 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                 </svg>
                 Primary Form
               </span>
+            )}
+            {filteredResponses.length > 0 && (
+              <button
+                onClick={exportToExcel}
+                className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export to Excel
+              </button>
             )}
           </div>
         </div>

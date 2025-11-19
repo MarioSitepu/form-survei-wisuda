@@ -68,16 +68,21 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
         isArchived: false,
       };
 
-      await formAPI.createForm(newForm);
+      const createdFormResponse = await formAPI.createForm(newForm);
+      
+      // Immediately archive the newly created form
+      const createdForm = createdFormResponse.form || createdFormResponse;
+      if (createdForm && createdForm.id) {
+        await formAPI.archiveForm(createdForm.id, true);
+      }
+      
       setNewFormTitle('');
       setNewFormDescription('');
       setShowCreateForm(false);
       await loadForms();
       onUpdate?.();
-      // Show success message and reset create form state
-      setShowCreateForm(false);
       // Show success message
-      alert('Form berhasil dibuat! Silakan edit form untuk menambahkan field.');
+      alert('Form berhasil dibuat dan diarsipkan! Silakan edit form untuk menambahkan field, kemudian set sebagai primary jika ingin digunakan.');
     } catch (error: any) {
       console.error('Error creating form:', error);
       alert(error.message || 'Gagal membuat form baru');
