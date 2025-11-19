@@ -109,20 +109,36 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
     }
   };
 
-  const handleArchive = async (formId: string, isArchived: boolean) => {
-    const action = isArchived ? 'mengarsipkan' : 'membatalkan arsip';
-    if (!confirm(`Yakin ingin ${action} form ini?`)) {
+  const handleArchive = async (formId: string) => {
+    if (!confirm('Yakin ingin mengarsipkan form ini? Form yang diarsipkan tidak dapat diisi oleh user.')) {
       return;
     }
 
     try {
-      await formAPI.archiveForm(formId, isArchived);
+      await formAPI.archiveForm(formId, true);
       await loadForms();
       onUpdate?.();
-      alert(`Form berhasil ${isArchived ? 'diarsipkan' : 'dibatalkan arsip'}`);
+      alert('Form berhasil diarsipkan');
     } catch (error: any) {
       console.error('Error archiving form:', error);
-      alert(error.message || `Gagal ${action} form`);
+      alert(error.message || 'Gagal mengarsipkan form');
+    }
+  };
+
+  const handleSetPrimaryFromArchived = async (formId: string) => {
+    if (!confirm('Yakin ingin mengatur form ini sebagai primary? Form ini akan diaktifkan dan form primary sebelumnya akan diubah.')) {
+      return;
+    }
+
+    try {
+      // Set as primary (this will automatically unarchive it)
+      await formAPI.setPrimaryForm(formId);
+      await loadForms();
+      onUpdate?.();
+      alert('Form berhasil diatur sebagai primary dan diaktifkan kembali.');
+    } catch (error: any) {
+      console.error('Error setting primary form:', error);
+      alert(error.message || 'Gagal mengatur form sebagai primary');
     }
   };
 
@@ -339,11 +355,6 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
                             Archived
                           </span>
                         )}
-                        {!form.isPrimary && !form.isArchived && (
-                          <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                            Active
-                          </span>
-                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
@@ -361,33 +372,41 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
                         >
                           Edit
                         </button>
-                        {!form.isPrimary && (
+                        {form.isArchived ? (
+                          // If archived, show "Set to Primary" button
                           <button
-                            onClick={() => handleSetPrimary(form.id)}
+                            onClick={() => handleSetPrimaryFromArchived(form.id)}
                             className="px-3 py-1.5 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium"
                             title="Set as Primary"
                           >
-                            Set Primary
+                            Set to Primary
                           </button>
-                        )}
-                        {!form.isPrimary && (
-                          <button
-                            onClick={() => handleArchive(form.id, !form.isArchived)}
-                            className="px-3 py-1.5 text-sm bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium"
-                            title={form.isArchived ? 'Unarchive' : 'Archive'}
-                          >
-                            {form.isArchived ? 'Unarchive' : 'Archive'}
-                          </button>
-                        )}
-                        {!form.isPrimary && (
-                          <button
-                            onClick={() => handleDelete(form.id)}
-                            className="px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium"
-                            title="Delete Form"
-                          >
-                            Hapus
-                          </button>
-                        )}
+                        ) : !form.isPrimary ? (
+                          // If not archived and not primary, show both buttons
+                          <>
+                            <button
+                              onClick={() => handleSetPrimary(form.id)}
+                              className="px-3 py-1.5 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium"
+                              title="Set as Primary"
+                            >
+                              Set Primary
+                            </button>
+                            <button
+                              onClick={() => handleArchive(form.id)}
+                              className="px-3 py-1.5 text-sm bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium"
+                              title="Archive Form"
+                            >
+                              Archive
+                            </button>
+                            <button
+                              onClick={() => handleDelete(form.id)}
+                              className="px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                              title="Delete Form"
+                            >
+                              Hapus
+                            </button>
+                          </>
+                        ) : null}
                       </div>
                     </td>
                   </tr>

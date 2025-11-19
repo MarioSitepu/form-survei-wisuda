@@ -45,7 +45,7 @@ router.put('/:id', authenticateAdmin, updateForm);
 // PUT /api/form/:id/set-primary - Set form as primary
 router.put('/:id/set-primary', authenticateAdmin, setPrimaryForm);
 
-// PUT /api/form/:id/archive - Archive/unarchive form
+// PUT /api/form/:id/archive - Archive form
 router.put('/:id/archive', authenticateAdmin, archiveForm);
 
 // DELETE /api/form/:id - Delete form

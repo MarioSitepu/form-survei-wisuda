@@ -95,12 +95,12 @@ export const setFormAsPrimary = async (formId) => {
     // First, unset all other primary forms
     await FormConfig.updateMany({}, { isPrimary: false });
     
-    // Set this form as primary
+    // Set this form as primary and unarchive it automatically
     const config = await FormConfig.findOneAndUpdate(
       { id: formId },
       { 
         isPrimary: true,
-        isArchived: false, // Can't be archived if primary
+        isArchived: false, // Automatically unarchive when set as primary
         updatedAt: Date.now()
       },
       { new: true }
@@ -117,7 +117,7 @@ export const setFormAsPrimary = async (formId) => {
   }
 };
 
-// Archive/unarchive form
+// Archive form
 export const archiveFormInStorage = async (formId, isArchived) => {
   try {
     const config = await FormConfig.findOne({ id: formId });

@@ -84,7 +84,7 @@ export const formAPI = {
   setPrimaryForm: (id: string) => apiCall(`/form/${id}/set-primary`, {
     method: 'PUT',
   }),
-  // Archive/unarchive form (admin only)
+  // Archive form (admin only)
   archiveForm: (id: string, isArchived: boolean) => apiCall(`/form/${id}/archive`, {
     method: 'PUT',
     body: JSON.stringify({ isArchived }),

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FormConfig, FormResponse, getFormResponses, getPrimaryFormConfig } from '@/lib/storage';
+import { formAPI } from '@/services/api';
 import FormEditor from './form-editor';
 import FormManagement from './form-management';
 import ResponsesTable from './responses-table';
@@ -15,7 +16,10 @@ interface AdminDashboardProps {
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>('responses');
   const [formConfig, setFormConfig] = useState<FormConfig | null>(null);
+  const [allForms, setAllForms] = useState<FormConfig[]>([]);
+  const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
   const [responses, setResponses] = useState<FormResponse[]>([]);
+  const [allResponses, setAllResponses] = useState<FormResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -26,16 +30,44 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const loadData = async () => {
     setIsLoading(true);
     try {
+      // Get all forms
+      const forms = await formAPI.getAllForms();
+      setAllForms(forms);
+      
       // Get primary form
       const primaryForm = await getPrimaryFormConfig();
-      setFormConfig(primaryForm);
       
-      // Get all responses and filter by primary form ID
-      const allResponses = await getFormResponses();
-      const filteredResponses = primaryForm 
-        ? allResponses.filter(r => r.formId === primaryForm.id)
-        : allResponses;
+      // Set selected form (default to primary, or keep current selection if it still exists)
+      let defaultFormId = primaryForm?.id || (forms.length > 0 ? forms[0].id : null);
+      
+      // If we have a current selection and it still exists in forms, keep it
+      // But if current selection is the old primary and primary changed, update to new primary
+      if (selectedFormId && forms.find(f => f.id === selectedFormId)) {
+        // Check if current selection was primary before
+        const currentForm = forms.find(f => f.id === selectedFormId);
+        // If primary form changed, update to new primary
+        if (primaryForm && primaryForm.id !== selectedFormId) {
+          defaultFormId = primaryForm.id;
+        } else {
+          defaultFormId = selectedFormId;
+        }
+      }
+      
+      setSelectedFormId(defaultFormId);
+      
+      // Get all responses
+      const allResponsesData = await getFormResponses();
+      setAllResponses(allResponsesData);
+      
+      // Filter responses by selected form
+      const filteredResponses = defaultFormId 
+        ? allResponsesData.filter(r => r.formId === defaultFormId)
+        : allResponsesData;
       setResponses(filteredResponses);
+      
+      // Set form config
+      const selectedForm = forms.find(f => f.id === defaultFormId) || primaryForm;
+      setFormConfig(selectedForm || null);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -43,18 +75,27 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   };
 
+  // Update when selected form changes
+  useEffect(() => {
+    if (selectedFormId) {
+      const selectedForm = allForms.find(f => f.id === selectedFormId);
+      setFormConfig(selectedForm || null);
+      
+      const filteredResponses = allResponses.filter(r => r.formId === selectedFormId);
+      setResponses(filteredResponses);
+    }
+  }, [selectedFormId, allForms, allResponses]);
+
   const handleFormUpdate = async () => {
     await loadData();
     setShowCreateForm(false);
-    if (activeTab !== 'form-management') {
-      setActiveTab('responses');
-    }
+    // Reload data will automatically set selectedFormId to primary
   };
 
   const stats = {
     totalResponses: responses.length,
     totalUsers: new Set(responses.map((r) => r.email).filter(Boolean)).size,
-    primaryFormTitle: formConfig?.title || 'No Form',
+    selectedFormTitle: formConfig?.title || 'No Form',
   };
 
   if (isLoading) {
@@ -113,30 +154,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       {/* Stats Overview */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Primary Form Info */}
-        {formConfig && (
-          <div className="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Primary Form</p>
-                  <p className="text-lg font-semibold text-gray-900">{formConfig.title}</p>
-                </div>
-              </div>
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                Active
-              </span>
-            </div>
-            {formConfig.description && (
-              <p className="text-sm text-gray-600 mt-2 ml-[52px]">{formConfig.description}</p>
-            )}
-          </div>
-        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 transform transition-all duration-300 hover:shadow-xl hover:scale-105">
             <div className="flex items-center justify-between mb-4">
@@ -210,10 +227,54 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           ))}
         </div>
 
+        {/* Form Selector - Show for tabs that need form selection */}
+        {(activeTab === 'responses' || activeTab === 'analytics' || activeTab === 'users' || activeTab === 'form-editor') && allForms.length > 0 && (
+          <div className="mb-6 bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-700">
+                  Pilih Form:
+                </label>
+                <select
+                  value={selectedFormId || ''}
+                  onChange={(e) => setSelectedFormId(e.target.value)}
+                  className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all bg-white min-w-[300px]"
+                >
+                  {allForms.map((form) => (
+                    <option key={form.id} value={form.id}>
+                      {form.title} {form.isPrimary ? '(Primary)' : ''} {form.isArchived ? '(Archived)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {formConfig && (
+                <div className="flex items-center gap-2">
+                  {formConfig.isPrimary && (
+                    <span className="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                      Primary
+                    </span>
+                  )}
+                  {formConfig.isArchived && (
+                    <span className="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
+                      Archived
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Tab Content */}
-        {activeTab === 'responses' && <ResponsesTable responses={responses} config={formConfig} />}
-        {activeTab === 'analytics' && <ResponsesAnalytics responses={responses} config={formConfig} />}
-        {activeTab === 'users' && <UsersList responses={responses} formId={formConfig?.id} />}
+        {activeTab === 'responses' && formConfig && (
+          <ResponsesTable responses={responses} config={formConfig} />
+        )}
+        {activeTab === 'analytics' && formConfig && (
+          <ResponsesAnalytics responses={responses} config={formConfig} />
+        )}
+        {activeTab === 'users' && formConfig && (
+          <UsersList responses={responses} formId={formConfig.id} />
+        )}
         {activeTab === 'form-management' && (
           <FormManagement 
             onUpdate={handleFormUpdate} 
@@ -223,6 +284,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         )}
         {activeTab === 'form-editor' && formConfig && (
           <FormEditor config={formConfig} onUpdate={handleFormUpdate} />
+        )}
+        {activeTab === 'form-editor' && !formConfig && allForms.length === 0 && (
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 text-center">
+            <p className="text-gray-600">Tidak ada form yang tersedia. Silakan buat form baru terlebih dahulu.</p>
+          </div>
         )}
       </div>
     </div>

@@ -133,7 +133,7 @@ export const setPrimaryForm = async (req, res) => {
   }
 };
 
-// Archive/unarchive form
+// Archive form
 export const archiveForm = async (req, res) => {
   try {
     const { id } = req.params;
@@ -143,9 +143,15 @@ export const archiveForm = async (req, res) => {
       return res.status(400).json({ error: 'isArchived must be a boolean' });
     }
 
+    // Only allow archiving (isArchived: true)
+    // To unarchive, user must set form as primary instead
+    if (!isArchived) {
+      return res.status(400).json({ error: 'To unarchive a form, set it as primary instead' });
+    }
+
     const updatedForm = await archiveFormInStorage(id, isArchived);
     res.json({ 
-      message: `Form ${isArchived ? 'archived' : 'unarchived'} successfully`, 
+      message: 'Form archived successfully', 
       form: updatedForm 
     });
   } catch (error) {
