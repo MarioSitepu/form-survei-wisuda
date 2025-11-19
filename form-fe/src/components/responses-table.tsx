@@ -22,9 +22,14 @@ const formatValue = (value: any): string => {
 };
 
 export default function ResponsesTable({ responses, config }: ResponsesTableProps) {
-  // Get all unique field names from all responses
+  // Filter responses by formId if config is provided
+  const filteredResponses = config 
+    ? responses.filter(r => r.formId === config.id)
+    : responses;
+
+  // Get all unique field names from filtered responses
   const allFieldNames = new Set<string>();
-  responses.forEach((response) => {
+  filteredResponses.forEach((response) => {
     Object.keys(response.data).forEach((key) => allFieldNames.add(key));
   });
 
@@ -48,13 +53,28 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '20px', fontWeight: 600 }}>
-            All Form Responses ({responses.length})
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '20px', fontWeight: 600 }}>
+              All Form Responses ({filteredResponses.length})
+              {config && (
+                <span className="ml-2 text-sm font-normal text-gray-600">
+                  - {config.title}
+                </span>
+              )}
+            </h2>
+            {config && (
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Primary Form
+              </span>
+            )}
+          </div>
         </div>
       </div>
       <div className="p-6">
-        {responses.length === 0 ? (
+        {filteredResponses.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
               <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +107,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {responses.map((response, index) => (
+                {filteredResponses.map((response, index) => (
                   <tr 
                     key={response.id} 
                     className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-200"
@@ -158,7 +178,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
       </div>
 
       {/* Detailed Response Cards */}
-      {responses.length > 0 && (
+      {filteredResponses.length > 0 && (
         <div className="px-6 pb-6 pt-0">
           <div className="mt-6 pt-6 border-t border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -168,7 +188,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
               Detail Responses
             </h3>
             <div className="space-y-4">
-              {responses.map((response, index) => (
+              {filteredResponses.map((response, index) => (
                 <div
                   key={response.id}
                   className="bg-gradient-to-br from-white to-purple-50/30 rounded-xl border-2 border-gray-200 hover:border-purple-300 shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden"

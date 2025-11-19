@@ -12,7 +12,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   // Check if form is archived
   const isArchived = config.isArchived === true;
 

@@ -1,15 +1,20 @@
-
 import { FormResponse } from '@/lib/storage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface UsersListProps {
   responses: FormResponse[];
+  formId?: string;
 }
 
-export default function UsersList({ responses }: UsersListProps) {
+export default function UsersList({ responses, formId }: UsersListProps) {
+  // Filter responses by formId if provided
+  const filteredResponses = formId 
+    ? responses.filter(r => r.formId === formId)
+    : responses;
+
   const users = Array.from(
     new Map(
-      responses
+      filteredResponses
         .filter((r) => r.email)
         .map((r) => [
           r.email,
@@ -25,7 +30,7 @@ export default function UsersList({ responses }: UsersListProps) {
 
   // Count submissions per user
   const userSubmissions = new Map<string, number>();
-  responses.forEach((r) => {
+  filteredResponses.forEach((r) => {
     if (r.email) {
       userSubmissions.set(r.email, (userSubmissions.get(r.email) || 0) + 1);
     }
