@@ -50,8 +50,9 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
     if (newField.options) {
       if (Array.isArray(newField.options)) {
         processedOptions = newField.options.filter((o: string) => o.trim());
-      } else if (typeof newField.options === 'string') {
-        processedOptions = newField.options.split('\n').filter((o: string) => o.trim());
+      } else {
+        const optionsStr = String(newField.options);
+        processedOptions = optionsStr.split('\n').filter((o: string) => o.trim());
       }
     }
 
