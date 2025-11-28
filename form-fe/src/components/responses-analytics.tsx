@@ -1,5 +1,5 @@
 import { FormResponse, FormConfig } from '@/lib/storage';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface ResponsesAnalyticsProps {
   responses: FormResponse[];
@@ -23,7 +23,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const COLORS = ['#9333ea', '#3b82f6', '#8b5cf6', '#6366f1', '#ec4899', '#10b981', '#f59e0b'];
-const PIE_COLORS = ['#9333ea', '#e5e7eb'];
 
 export default function ResponsesAnalytics({ responses, config }: ResponsesAnalyticsProps) {
   // Filter responses by formId if config is provided
@@ -354,12 +353,12 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          label={({ name, percent }: { name: string; percent?: number }) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
                           outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {analytics.data.map((entry: any, idx: number) => (
+                          {analytics.data.map((_entry: any, idx: number) => (
                             <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
                           ))}
                         </Pie>

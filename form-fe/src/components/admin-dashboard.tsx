@@ -41,9 +41,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       
       // If we have a current selection and it still exists in forms, keep it
       // But if current selection is the old primary and primary changed, update to new primary
-      if (selectedFormId && forms.find(f => f.id === selectedFormId)) {
-        // Check if current selection was primary before
-        const currentForm = forms.find(f => f.id === selectedFormId);
+      if (selectedFormId && forms.find((f: FormConfig) => f.id === selectedFormId)) {
         // If primary form changed, update to new primary
         if (primaryForm && primaryForm.id !== selectedFormId) {
           defaultFormId = primaryForm.id;
@@ -65,7 +63,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       setResponses(filteredResponses);
       
       // Set form config
-      const selectedForm = forms.find(f => f.id === defaultFormId) || primaryForm;
+      const selectedForm = forms.find((f: FormConfig) => f.id === defaultFormId) || primaryForm;
       setFormConfig(selectedForm || null);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -77,7 +75,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   // Update when selected form changes
   useEffect(() => {
     if (selectedFormId) {
-      const selectedForm = allForms.find(f => f.id === selectedFormId);
+      const selectedForm = allForms.find((f: FormConfig) => f.id === selectedFormId);
       setFormConfig(selectedForm || null);
       
       const filteredResponses = allResponses.filter(r => r.formId === selectedFormId);

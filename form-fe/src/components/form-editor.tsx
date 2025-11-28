@@ -10,7 +10,6 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
   const [title, setTitle] = useState(config.title);
   const [description, setDescription] = useState(config.description);
   const [fields, setFields] = useState<FormField[]>(config.fields);
-  const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [newField, setNewField] = useState<Partial<FormField>>({
     type: 'text',
@@ -50,9 +49,9 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
     let processedOptions: string[] = [];
     if (newField.options) {
       if (Array.isArray(newField.options)) {
-        processedOptions = newField.options.filter((o) => o.trim());
+        processedOptions = newField.options.filter((o: string) => o.trim());
       } else if (typeof newField.options === 'string') {
-        processedOptions = newField.options.split('\n').filter((o) => o.trim());
+        processedOptions = newField.options.split('\n').filter((o: string) => o.trim());
       }
     }
 
@@ -318,7 +317,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                         </button>
                         
                         {/* Tombol kurang (hapus) - hanya tampil jika lebih dari 1 opsi */}
-                        {newField.options.length > 1 && (
+                        {newField.options && newField.options.length > 1 && (
                           <button
                             type="button"
                             onClick={() => {
