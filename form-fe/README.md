@@ -59,6 +59,6 @@ npm run preview
 ## URL Routes
 
 - `/` - Halaman utama dengan form
-- `/admin` - Link ke admin dashboard
-- `/admin-7x8k9m2q` - Admin dashboard (memerlukan login)
+- `/admin` - Admin dashboard (memerlukan login)
+- `/success` - Halaman sukses setelah submit form
 
