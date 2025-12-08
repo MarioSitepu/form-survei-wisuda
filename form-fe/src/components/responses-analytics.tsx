@@ -186,7 +186,6 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
       const chartHeight = 60;
       const chartWidth = contentWidth;
       const chartX = margin;
-      const chartYStart = yPosition;
 
       // Helper function to add new page if needed
       const checkNewPage = (requiredHeight: number) => {
@@ -212,9 +211,7 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
         const chartTop = yPosition;
         const chartBottom = chartTop + chartHeight;
         const chartLeft = chartX;
-        const chartRight = chartX + chartWidth;
         const barAreaHeight = chartHeight - 20;
-        const barAreaTop = chartTop + 5;
         const barAreaBottom = chartBottom - 15;
         const barAreaWidth = chartWidth - 30;
 
@@ -288,10 +285,8 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
         const chartTop = yPosition;
         const chartBottom = chartTop + chartHeight;
         const chartLeft = chartX;
-        const chartRight = chartX + chartWidth;
         const barAreaHeight = chartHeight - 20;
         const barAreaTop = chartTop + 5;
-        const barAreaBottom = chartBottom - 15;
         const barAreaWidth = chartWidth - 30;
 
         // Draw chart border
