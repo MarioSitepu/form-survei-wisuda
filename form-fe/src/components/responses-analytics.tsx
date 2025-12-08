@@ -1,7 +1,6 @@
 import { FormResponse, FormConfig } from '@/lib/storage';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
@@ -174,17 +173,20 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
 
   const fieldAnalytics = generateFieldAnalytics();
 
-  // Export to PDF function
+  // Export to PDF function with manually drawn charts
   const exportToPDF = async () => {
     setIsExporting(true);
     try {
-      // Wait a bit to ensure charts are fully rendered
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
       let yPosition = 20;
       const margin = 20;
+      const contentWidth = pageWidth - (margin * 2);
+      const chartHeight = 60;
+      const chartWidth = contentWidth;
+      const chartX = margin;
+      const chartYStart = yPosition;
 
       // Helper function to add new page if needed
       const checkNewPage = (requiredHeight: number) => {
@@ -196,19 +198,282 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
         return false;
       };
 
-      // Add title
+      // Helper function to draw Bar Chart
+      const drawBarChart = (title: string, data: any[], dataKey: string, valueKey: string, colors: string[] = COLORS) => {
+        checkNewPage(chartHeight + 30);
+        
+        // Title
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(51, 51, 51);
+        pdf.text(title, chartX, yPosition);
+        yPosition += 8;
+
+        const chartTop = yPosition;
+        const chartBottom = chartTop + chartHeight;
+        const chartLeft = chartX;
+        const chartRight = chartX + chartWidth;
+        const barAreaHeight = chartHeight - 20;
+        const barAreaTop = chartTop + 5;
+        const barAreaBottom = chartBottom - 15;
+        const barAreaWidth = chartWidth - 30;
+
+        // Draw chart border
+        pdf.setDrawColor(200, 200, 200);
+        pdf.rect(chartLeft, chartTop, chartWidth, chartHeight);
+
+        if (data.length === 0) {
+          pdf.setFontSize(10);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('No data available', chartX + 10, chartTop + chartHeight / 2);
+          yPosition = chartBottom + 10;
+          return;
+        }
+
+        // Find max value for scaling
+        const maxValue = Math.max(...data.map(d => Number(d[valueKey]) || 0), 1);
+        const barWidth = data.length > 0 ? barAreaWidth / (data.length * 2) : 0;
+        const spacing = data.length > 0 ? barAreaWidth / data.length : 0;
+
+        // Draw bars
+        data.forEach((item, index) => {
+          const value = Number(item[valueKey]) || 0;
+          const barHeight = (value / maxValue) * barAreaHeight;
+          const x = chartLeft + 15 + (index * spacing) + (spacing - barWidth) / 2;
+          const y = barAreaBottom - barHeight;
+
+          // Draw bar
+          const color = colors[index % colors.length];
+          const rgb = hexToRgb(color);
+          if (rgb) {
+            pdf.setFillColor(rgb.r, rgb.g, rgb.b);
+          }
+          pdf.rect(x, y, barWidth, barHeight, 'F');
+          
+          // Draw value on top of bar
+          pdf.setFontSize(8);
+          pdf.setTextColor(51, 51, 51);
+          pdf.text(String(value), x + barWidth / 2, y - 2, { align: 'center' });
+
+          // Draw label below
+          const label = String(item[dataKey] || '').substring(0, 15);
+          pdf.setFontSize(7);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(label, x + barWidth / 2, barAreaBottom + 3, { align: 'center' });
+        });
+
+        // Draw Y-axis labels
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 100, 100);
+        for (let i = 0; i <= 4; i++) {
+          const value = (maxValue / 4) * i;
+          const y = barAreaBottom - (i * barAreaHeight / 4);
+          pdf.text(value.toFixed(0), chartLeft + 5, y + 2, { align: 'right' });
+        }
+
+        yPosition = chartBottom + 10;
+      };
+
+      // Helper function to draw Pie Chart (as horizontal bar chart for better PDF compatibility)
+      const drawPieChart = (title: string, data: any[], colors: string[] = COLORS) => {
+        checkNewPage(chartHeight + 30);
+        
+        // Title
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(51, 51, 51);
+        pdf.text(title, chartX, yPosition);
+        yPosition += 8;
+
+        const chartTop = yPosition;
+        const chartBottom = chartTop + chartHeight;
+        const chartLeft = chartX;
+        const chartRight = chartX + chartWidth;
+        const barAreaHeight = chartHeight - 20;
+        const barAreaTop = chartTop + 5;
+        const barAreaBottom = chartBottom - 15;
+        const barAreaWidth = chartWidth - 30;
+
+        // Draw chart border
+        pdf.setDrawColor(200, 200, 200);
+        pdf.rect(chartLeft, chartTop, chartWidth, chartHeight);
+
+        if (data.length === 0) {
+          pdf.setFontSize(10);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('No data available', chartX + 10, chartTop + chartHeight / 2);
+          yPosition = chartBottom + 10;
+          return;
+        }
+
+        // Calculate total
+        const total = data.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+        if (total === 0) {
+          pdf.setFontSize(10);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('No data available', chartX + 10, chartTop + chartHeight / 2);
+          yPosition = chartBottom + 10;
+          return;
+        }
+
+        // Draw as horizontal stacked bars (pie chart representation)
+        const barHeight = (barAreaHeight - (data.length - 1) * 4) / data.length;
+        let currentX = chartLeft + 15;
+        
+        data.forEach((item, index) => {
+          const value = Number(item.value) || 0;
+          const percentage = (value / total) * 100;
+          const barWidth = (percentage / 100) * barAreaWidth;
+          const y = barAreaTop + (index * (barHeight + 4));
+
+          // Draw bar
+          const color = colors[index % colors.length];
+          const rgb = hexToRgb(color);
+          if (rgb) {
+            pdf.setFillColor(rgb.r, rgb.g, rgb.b);
+          }
+          pdf.rect(currentX, y, barWidth, barHeight, 'F');
+          
+          // Draw border
+          pdf.setDrawColor(200, 200, 200);
+          pdf.rect(currentX, y, barAreaWidth, barHeight);
+
+          // Draw label and value
+          pdf.setFontSize(9);
+          pdf.setTextColor(51, 51, 51);
+          const label = `${item.name}: ${value} (${percentage.toFixed(1)}%)`;
+          
+          // Text color based on bar width (white if bar is wide enough, black if narrow)
+          if (barWidth > 30) {
+            pdf.setTextColor(255, 255, 255);
+            pdf.text(label, currentX + 3, y + barHeight / 2 + 2);
+          } else {
+            pdf.setTextColor(51, 51, 51);
+            pdf.text(label, currentX + barWidth + 5, y + barHeight / 2 + 2);
+          }
+        });
+
+        yPosition = chartBottom + 10;
+      };
+
+      // Helper function to draw Line Chart
+      const drawLineChart = (title: string, data: any[], dataKey: string, valueKey: string) => {
+        checkNewPage(chartHeight + 30);
+        
+        // Title
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(51, 51, 51);
+        pdf.text(title, chartX, yPosition);
+        yPosition += 8;
+
+        const chartTop = yPosition;
+        const chartBottom = chartTop + chartHeight;
+        const chartLeft = chartX;
+        const chartRight = chartX + chartWidth;
+        const lineAreaHeight = chartHeight - 20;
+        const lineAreaTop = chartTop + 5;
+        const lineAreaBottom = chartBottom - 15;
+        const lineAreaWidth = chartWidth - 30;
+
+        // Draw chart border
+        pdf.setDrawColor(200, 200, 200);
+        pdf.rect(chartLeft, chartTop, chartWidth, chartHeight);
+
+        if (data.length === 0) {
+          pdf.setFontSize(10);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text('No data available', chartX + 10, chartTop + chartHeight / 2);
+          yPosition = chartBottom + 10;
+          return;
+        }
+
+        // Find max value for scaling
+        const maxValue = Math.max(...data.map(d => Number(d[valueKey]) || 0), 1);
+        const pointSpacing = data.length > 1 ? lineAreaWidth / (data.length - 1) : 0;
+
+        // Draw grid lines
+        pdf.setDrawColor(230, 230, 230);
+        for (let i = 0; i <= 4; i++) {
+          const y = lineAreaTop + (i * lineAreaHeight / 4);
+          pdf.line(chartLeft + 15, y, chartRight - 15, y);
+        }
+
+        // Draw line
+        pdf.setDrawColor(147, 51, 234); // Purple
+        pdf.setLineWidth(2);
+        const points: number[][] = [];
+        data.forEach((item, index) => {
+          const value = Number(item[valueKey]) || 0;
+          const x = chartLeft + 15 + (index * pointSpacing);
+          const y = lineAreaBottom - ((value / maxValue) * lineAreaHeight);
+          points.push([x, y]);
+        });
+
+        // Draw line connecting points
+        for (let i = 0; i < points.length - 1; i++) {
+          pdf.line(points[i][0], points[i][1], points[i + 1][0], points[i + 1][1]);
+        }
+
+        // Draw points
+        pdf.setFillColor(147, 51, 234);
+        points.forEach(([x, y]) => {
+          pdf.circle(x, y, 2, 'F');
+        });
+
+        // Draw labels
+        pdf.setFontSize(7);
+        pdf.setTextColor(100, 100, 100);
+        data.forEach((item, index) => {
+          const x = chartLeft + 15 + (index * pointSpacing);
+          const label = String(item[dataKey] || '').substring(0, 8);
+          pdf.text(label, x, lineAreaBottom + 3, { align: 'center' });
+        });
+
+        // Draw Y-axis labels
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 100, 100);
+        for (let i = 0; i <= 4; i++) {
+          const value = (maxValue / 4) * i;
+          const y = lineAreaBottom - (i * lineAreaHeight / 4);
+          pdf.text(value.toFixed(0), chartLeft + 5, y + 2, { align: 'right' });
+        }
+
+        yPosition = chartBottom + 10;
+      };
+
+      // Helper function to convert hex to RGB
+      const hexToRgb = (hex: string) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+      };
+
+
+      // Add header with styling
+      pdf.setFillColor(147, 51, 234); // Purple
+      pdf.rect(0, 0, pageWidth, 15, 'F');
+      pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Analytics Report', margin, 12);
+      
+      yPosition = 25;
       pdf.setTextColor(51, 51, 51);
-      pdf.text('Analytics Report', margin, yPosition);
-      yPosition += 10;
+      pdf.setFont('helvetica', 'normal');
 
       // Add form info
       if (config) {
-        pdf.setFontSize(14);
-        pdf.setTextColor(100, 100, 100);
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
         pdf.text('Form: ' + config.title, margin, yPosition);
-        yPosition += 7;
+        yPosition += 8;
         pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
         pdf.text(`Total Responses: ${filteredResponses.length}`, margin, yPosition);
         yPosition += 10;
       }
@@ -226,261 +491,133 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
       })}`, margin, yPosition);
       yPosition += 15;
 
-      // Add summary statistics
-      if (fieldAnalytics.length > 0) {
-        pdf.setFontSize(16);
-        pdf.setTextColor(51, 51, 51);
-        pdf.text('Summary Statistics', margin, yPosition);
-        yPosition += 10;
-
-        pdf.setFontSize(11);
-        pdf.setTextColor(80, 80, 80);
-        
-        fieldAnalytics.forEach((analytics) => {
-          checkNewPage(15);
-          
-          pdf.setFontSize(12);
-          pdf.setTextColor(51, 51, 51);
-          pdf.text(analytics.field.label, margin, yPosition);
-          yPosition += 7;
-
-          pdf.setFontSize(10);
-          pdf.setTextColor(100, 100, 100);
-
-          if (analytics.type === 'statistics') {
-            pdf.text(`  Average: ${analytics.data.average.toFixed(2)}`, margin + 5, yPosition);
-            yPosition += 5;
-            pdf.text(`  Min: ${analytics.data.min}`, margin + 5, yPosition);
-            yPosition += 5;
-            pdf.text(`  Max: ${analytics.data.max}`, margin + 5, yPosition);
-            yPosition += 5;
-            pdf.text(`  Total: ${analytics.data.total.toFixed(2)}`, margin + 5, yPosition);
-            yPosition += 5;
-            pdf.text(`  Count: ${analytics.data.count}`, margin + 5, yPosition);
-          } else if (analytics.type === 'distribution') {
-            analytics.data.slice(0, 5).forEach((item: any) => {
-              pdf.text(`  ${item.name}: ${item.count}`, margin + 5, yPosition);
-              yPosition += 5;
-            });
-            if (analytics.data.length > 5) {
-              pdf.text(`  ... and ${analytics.data.length - 5} more`, margin + 5, yPosition);
-              yPosition += 5;
-            }
-          } else if (analytics.type === 'pie') {
-            analytics.data.forEach((item: any) => {
-              pdf.text(`  ${item.name}: ${item.value}`, margin + 5, yPosition);
-              yPosition += 5;
-            });
-          }
-          
-          yPosition += 5;
-        });
+      // Add Responses Over Time Chart
+      if (timeSeriesData.length > 0 && filteredResponses.length > 0) {
+        drawLineChart('Responses Over Time', timeSeriesData, 'date', 'count');
       }
 
-      // Add time series data summary
-      if (timeSeriesData.length > 0) {
-        checkNewPage(20);
-        pdf.setFontSize(16);
+
+      // Add all field charts
+      for (let i = 0; i < fieldAnalytics.length; i++) {
+        const analytics = fieldAnalytics[i];
+        
+        if (analytics.type === 'distribution') {
+          drawBarChart(analytics.field.label, analytics.data, 'name', 'count');
+        } else if (analytics.type === 'pie') {
+          drawPieChart(analytics.field.label, analytics.data);
+        }
+      }
+
+      // Add detailed data tables
+      const tableWidth = contentWidth;
+      const colWidth = tableWidth / 2;
+
+      // Helper function to draw data table
+      const drawDataTable = (title: string, data: any[], dataKey: string, valueKey: string) => {
+        checkNewPage(60);
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(51, 51, 51);
-        pdf.text('Responses Over Time', margin, yPosition);
+        pdf.text(title, margin, yPosition);
+        yPosition += 8;
+
+        // Draw table header
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(margin, yPosition, tableWidth, 8, 'F');
+        pdf.setDrawColor(200, 200, 200);
+        pdf.rect(margin, yPosition, tableWidth, 8);
+        pdf.rect(margin, yPosition, colWidth, 8);
+        pdf.text('Item', margin + 3, yPosition + 6);
+        pdf.text('Value', margin + colWidth + 3, yPosition + 6);
+        yPosition += 10;
+
+        // Draw data rows
+        pdf.setFontSize(9);
+        pdf.setTextColor(51, 51, 51);
+        const maxRows = Math.min(data.length, 20);
+        for (let i = 0; i < maxRows; i++) {
+          checkNewPage(6);
+          const item = data[i];
+          const label = String(item[dataKey] || '').substring(0, 40);
+          const value = item[valueKey] || 0;
+          
+          pdf.setDrawColor(220, 220, 220);
+          pdf.rect(margin, yPosition - 2, tableWidth, 6);
+          pdf.rect(margin, yPosition - 2, colWidth, 6);
+          
+          pdf.text(label, margin + 3, yPosition + 3);
+          pdf.text(String(value), margin + colWidth + 3, yPosition + 3);
+          yPosition += 6;
+        }
+
+        if (data.length > maxRows) {
+          pdf.setFontSize(8);
+          pdf.setTextColor(150, 150, 150);
+          pdf.text(`... and ${data.length - maxRows} more items`, margin + 3, yPosition + 3);
+          yPosition += 6;
+        }
+
+        yPosition += 5;
+      };
+
+      // Add time series table
+      if (timeSeriesData.length > 0) {
+        checkNewPage(40);
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(51, 51, 51);
+        pdf.text('Responses Over Time - Detailed Data', margin, yPosition);
         yPosition += 10;
 
         pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(100, 100, 100);
-        const totalCount = timeSeriesData.reduce((sum: number, item: any) => sum + item.count, 0);
-        pdf.text(`Total responses: ${totalCount}`, margin, yPosition);
-        yPosition += 7;
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(margin, yPosition, tableWidth, 8, 'F');
+        pdf.setDrawColor(200, 200, 200);
+        pdf.rect(margin, yPosition, tableWidth, 8);
+        pdf.rect(margin, yPosition, colWidth, 8);
+        pdf.text('Date', margin + 3, yPosition + 6);
+        pdf.text('Count', margin + colWidth + 3, yPosition + 6);
+        yPosition += 10;
 
         pdf.setFontSize(9);
-        pdf.setTextColor(120, 120, 120);
-        pdf.text('Recent dates:', margin, yPosition);
+        pdf.setTextColor(51, 51, 51);
+        timeSeriesData.forEach((item: any) => {
+          checkNewPage(6);
+          pdf.setDrawColor(220, 220, 220);
+          pdf.rect(margin, yPosition - 2, tableWidth, 6);
+          pdf.rect(margin, yPosition - 2, colWidth, 6);
+          
+          pdf.text(item.date, margin + 3, yPosition + 3);
+          pdf.text(String(item.count), margin + colWidth + 3, yPosition + 3);
+          yPosition += 6;
+        });
         yPosition += 5;
-
-        timeSeriesData.slice(-10).forEach((item: any) => {
-          checkNewPage(5);
-          pdf.text(`  ${item.date}: ${item.count} response(s)`, margin + 5, yPosition);
-          yPosition += 5;
-        });
       }
 
-      // Capture and add charts as images
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const maxImageWidth = pageWidth - (margin * 2);
-      const imageHeight = 60; // mm
-
-      // Helper function to convert SVG to canvas
-      const svgToCanvas = (svg: SVGElement): Promise<HTMLCanvasElement> => {
-        return new Promise((resolve, reject) => {
-          try {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            if (!ctx) {
-              reject(new Error('Could not get canvas context'));
-              return;
-            }
-
-            // Get SVG dimensions
-            const svgRect = svg.getBoundingClientRect();
-            let svgWidth = svgRect.width || parseInt(svg.getAttribute('width') || '0');
-            let svgHeight = svgRect.height || parseInt(svg.getAttribute('height') || '0');
-
-            // If dimensions are 0, try to get from viewBox
-            if (svgWidth === 0 || svgHeight === 0) {
-              const viewBox = svg.getAttribute('viewBox');
-              if (viewBox) {
-                const parts = viewBox.split(' ');
-                svgWidth = parseFloat(parts[2]) || 800;
-                svgHeight = parseFloat(parts[3]) || 400;
-              } else {
-                svgWidth = 800;
-                svgHeight = 400;
-              }
-            }
-
-            // Clone SVG to avoid modifying original
-            const clonedSvg = svg.cloneNode(true) as SVGElement;
-            clonedSvg.setAttribute('width', String(svgWidth));
-            clonedSvg.setAttribute('height', String(svgHeight));
-            clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-            const svgData = new XMLSerializer().serializeToString(clonedSvg);
-            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
-
-            const img = new Image();
-            img.onload = () => {
-              // Use actual image dimensions or fallback to calculated
-              const finalWidth = img.width || svgWidth;
-              const finalHeight = img.height || svgHeight;
-              
-              canvas.width = finalWidth;
-              canvas.height = finalHeight;
-              
-              // Fill white background
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-              
-              // Draw the image
-              ctx.drawImage(img, 0, 0);
-              URL.revokeObjectURL(url);
-              resolve(canvas);
-            };
-            img.onerror = (error) => {
-              URL.revokeObjectURL(url);
-              reject(error);
-            };
-            img.src = url;
-          } catch (error) {
-            reject(error);
-          }
-        });
-      };
-
-      // Helper function to capture chart
-      const captureChart = async (selector: string, title: string) => {
-        try {
-          // Find the chart container
-          const chartContainer = document.querySelector(selector) as HTMLElement;
-          if (!chartContainer) {
-            console.warn(`Chart container not found: ${selector}`);
-            return false;
-          }
-
-          // Scroll to element to ensure it's visible
-          chartContainer.scrollIntoView({ behavior: 'instant', block: 'center' });
-          await new Promise(resolve => setTimeout(resolve, 800));
-
-          // Try to find the SVG element inside (Recharts uses SVG)
-          const svgElement = chartContainer.querySelector('svg');
-          if (!svgElement) {
-            console.warn(`SVG not found in container: ${selector}`);
-            // Fallback to html2canvas
-            try {
-              checkNewPage(imageHeight + 20);
-              pdf.setFontSize(14);
-              pdf.setTextColor(51, 51, 51);
-              pdf.text(title, margin, yPosition);
-              yPosition += 8;
-
-              const canvas = await html2canvas(chartContainer, {
-                backgroundColor: '#ffffff',
-                scale: 2,
-                logging: false,
-                useCORS: true,
-                allowTaint: true,
-              });
-              
-              if (canvas.width === 0 || canvas.height === 0) {
-                console.warn('Canvas has zero dimensions in fallback');
-                return false;
-              }
-
-              const imgData = canvas.toDataURL('image/png', 0.95);
-              const imgWidth = maxImageWidth;
-              const imgHeight = (canvas.height * imgWidth) / canvas.width;
-              
-              const maxHeight = pageHeight - yPosition - margin;
-              const finalHeight = Math.min(imgHeight, maxHeight);
-              const finalWidth = (canvas.width * finalHeight) / canvas.height;
-              
-              pdf.addImage(imgData, 'PNG', margin, yPosition, finalWidth, finalHeight);
-              yPosition += finalHeight + 10;
-              return true;
-            } catch (error) {
-              console.error('Fallback html2canvas failed:', error);
-              return false;
-            }
-          }
-
-          console.log(`Found SVG for ${selector}, dimensions:`, svgElement.getBoundingClientRect());
-
-          // Convert SVG to canvas
-          const canvas = await svgToCanvas(svgElement);
-          
-          if (canvas.width === 0 || canvas.height === 0) {
-            console.warn('Canvas has zero dimensions after SVG conversion');
-            return false;
-          }
-          
-          console.log(`Canvas created: ${canvas.width}x${canvas.height}`);
-          
-          checkNewPage(imageHeight + 20);
-          pdf.setFontSize(14);
-          pdf.setTextColor(51, 51, 51);
-          pdf.text(title, margin, yPosition);
-          yPosition += 8;
-
-          const imgData = canvas.toDataURL('image/png', 0.95);
-          const imgWidth = maxImageWidth;
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          
-          // Ensure image fits on page
-          const maxHeight = pageHeight - yPosition - margin;
-          const finalHeight = Math.min(imgHeight, maxHeight);
-          const finalWidth = (canvas.width * finalHeight) / canvas.height;
-          
-          pdf.addImage(imgData, 'PNG', margin, yPosition, finalWidth, finalHeight);
-          yPosition += finalHeight + 10;
-          return true;
-        } catch (error) {
-          console.error(`Error capturing chart ${selector}:`, error);
-          return false;
-        }
-      };
-
-      // Capture time series chart
-      if (timeSeriesData.length > 0) {
-        await captureChart('[data-chart="time-series"]', 'Responses Over Time Chart');
-      }
-
-      // Capture field analytics charts
+      // Add field analytics tables
       for (let i = 0; i < fieldAnalytics.length; i++) {
         const analytics = fieldAnalytics[i];
-        await captureChart(`[data-chart="field-${analytics.field.id}"]`, analytics.field.label);
+        
+        if (analytics.type === 'distribution') {
+          drawDataTable(`${analytics.field.label} - Detailed Data`, analytics.data, 'name', 'count');
+        } else if (analytics.type === 'pie') {
+          drawDataTable(`${analytics.field.label} - Detailed Data`, analytics.data, 'name', 'value');
+        }
       }
 
       // Save PDF
-      const fileName = `analytics-${config?.title || 'report'}-${now.toISOString().split('T')[0]}.pdf`;
+      // Format: Laporan-Analisis-(NamaForm)-(jam-hari-bulan-tahun)
+      const formName = (config?.title || 'report').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '-');
+      const hour = String(now.getHours()).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const fileName = `Laporan-Analisis-${formName}-${hour}-${day}-${month}-${year}.pdf`;
       pdf.save(fileName);
     } catch (error) {
       console.error('Error exporting to PDF:', error);

@@ -11,8 +11,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB (non-blocking)
+connectDB().catch(err => {
+  console.error('Failed to connect to MongoDB:', err);
+});
 
 // Middleware
 app.use(cors({
