@@ -96,9 +96,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
+      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-cyan-50 to-indigo-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-cyan-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-xl font-semibold text-gray-700">Loading dashboard...</div>
         </div>
       </div>
@@ -106,18 +106,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-cyan-50 to-indigo-50" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-500 flex items-center justify-center shadow-md">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-semibold bg-gradient-to-r from-cyan-600 to-cyan-600 bg-clip-text text-transparent">
                 Admin Dashboard
               </h1>
             </div>
@@ -139,26 +139,26 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 transform transition-all duration-300 hover:shadow-xl hover:scale-105">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
             </div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-2">
+            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-800 bg-clip-text text-transparent mb-2">
               {stats.totalResponses}
             </div>
             <p className="text-sm font-medium text-gray-600">Total Responses</p>
           </div>
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 transform transition-all duration-300 hover:shadow-xl hover:scale-105">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               </div>
             </div>
-            <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent mb-2">
+            <div className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-cyan-800 bg-clip-text text-transparent mb-2">
               {stats.totalUsers}
             </div>
             <p className="text-sm font-medium text-gray-600">Unique Users</p>
@@ -199,7 +199,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               onClick={() => setActiveTab(tab.id as TabType)}
               className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg transform scale-105'
+                  ? 'bg-gradient-to-r from-cyan-600 to-cyan-600 text-white shadow-lg transform scale-105'
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -220,7 +220,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <select
                   value={selectedFormId || ''}
                   onChange={(e) => setSelectedFormId(e.target.value)}
-                  className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all bg-white min-w-[300px]"
+                  className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all bg-white min-w-[300px]"
                 >
                   {allForms.map((form) => (
                     <option key={form.id} value={form.id}>

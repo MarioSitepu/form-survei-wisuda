@@ -12,7 +12,7 @@ interface ResponsesAnalyticsProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border-2 border-purple-200 rounded-lg shadow-lg p-3">
+      <div className="bg-white border-2 border-cyan-200 rounded-lg shadow-lg p-3">
         <p className="font-semibold text-gray-900 mb-1">{label}</p>
         {payload.map((entry: any, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -25,7 +25,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const COLORS = ['#9333ea', '#3b82f6', '#8b5cf6', '#6366f1', '#ec4899', '#10b981', '#f59e0b'];
+const COLORS = ['#00CCE7', '#01C0DC', '#00CCE8', '#00B8D4', '#00A8C5', '#10b981', '#f59e0b'];
 
 export default function ResponsesAnalytics({ responses, config }: ResponsesAnalyticsProps) {
   const [isExporting, setIsExporting] = useState(false);
@@ -400,7 +400,7 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
         }
 
         // Draw line
-        pdf.setDrawColor(147, 51, 234); // Purple
+        pdf.setDrawColor(0, 204, 231); // Cyan Primary
         pdf.setLineWidth(2);
         const points: number[][] = [];
         data.forEach((item, index) => {
@@ -416,7 +416,7 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
         }
 
         // Draw points
-        pdf.setFillColor(147, 51, 234);
+        pdf.setFillColor(0, 204, 231);
         points.forEach(([x, y]) => {
           pdf.circle(x, y, 2, 'F');
         });
@@ -454,7 +454,7 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
 
 
       // Add header with styling
-      pdf.setFillColor(147, 51, 234); // Purple
+      pdf.setFillColor(0, 204, 231); // Cyan Primary
       pdf.rect(0, 0, pageWidth, 15, 'F');
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(20);
@@ -634,7 +634,7 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-500 flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -649,7 +649,7 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
               <Button
                 onClick={exportToPDF}
                 disabled={isExporting}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg disabled:opacity-50"
+                className="bg-gradient-to-r from-[#00CCE7] to-[#01C0DC] hover:from-[#00B8D4] hover:to-[#00A8C5] text-white shadow-lg disabled:opacity-50"
               >
                 {isExporting ? (
                   <>
@@ -676,9 +676,9 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
       {/* Responses Over Time - Always shown */}
       {filteredResponses.length > 0 && (
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-chart="time-series">
-          <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+          <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-500 flex items-center justify-center shadow-md">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -694,8 +694,8 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
                   <LineChart data={timeSeriesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <defs>
                     <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#9333ea" stopOpacity={0.8} />
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="0%" stopColor="#00CCE7" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="#01C0DC" stopOpacity={0.3} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
@@ -714,10 +714,10 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
                   <Line 
                     type="monotone" 
                     dataKey="count" 
-                    stroke="#9333ea" 
+                    stroke="#00CCE7" 
                     strokeWidth={3}
-                    dot={{ fill: '#9333ea', r: 5, strokeWidth: 2, stroke: '#fff' }}
-                    activeDot={{ r: 7, fill: '#3b82f6' }}
+                    dot={{ fill: '#00CCE7', r: 5, strokeWidth: 2, stroke: '#fff' }}
+                    activeDot={{ r: 7, fill: '#01C0DC' }}
                   />
                   </LineChart>
                 </ResponsiveContainer>
@@ -745,9 +745,9 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
           if (analytics.type === 'distribution') {
             return (
               <div key={`${analytics.field.id}-${index}`} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-chart={`field-${analytics.field.id}`}>
-                <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+                <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-500 flex items-center justify-center shadow-md">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
@@ -787,9 +787,9 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
                           if (active && payload && payload.length) {
                             const data = payload[0].payload;
                             return (
-                              <div className="bg-white border-2 border-purple-200 rounded-lg shadow-lg p-3">
+                              <div className="bg-white border-2 border-cyan-200 rounded-lg shadow-lg p-3">
                                 <p className="font-semibold text-gray-900 mb-1">{data.fullName || data.name}</p>
-                                <p className="text-sm text-purple-600">
+                                <p className="text-sm text-[#00CCE7]">
                                   Count: <span className="font-semibold">{data.count}</span>
                                 </p>
                               </div>
@@ -816,9 +816,9 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
           if (analytics.type === 'pie') {
             return (
               <div key={`${analytics.field.id}-${index}`} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-chart={`field-${analytics.field.id}`}>
-                <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+                <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-500 flex items-center justify-center shadow-md">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                       </svg>
@@ -877,9 +877,9 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
           if (analytics.type === 'statistics') {
             return (
               <div key={`${analytics.field.id}-${index}`} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+                <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-500 flex items-center justify-center shadow-md">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
@@ -892,9 +892,9 @@ export default function ResponsesAnalytics({ responses, config }: ResponsesAnaly
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-200">
+                    <div className="bg-gradient-to-br from-cyan-50 to-cyan-50 rounded-lg p-4 border border-cyan-200">
                       <p className="text-xs text-gray-600 mb-1">Rata-rata</p>
-                      <p className="text-2xl font-bold text-purple-600">{analytics.data.average.toFixed(2)}</p>
+                      <p className="text-2xl font-bold text-[#00CCE7]">{analytics.data.average.toFixed(2)}</p>
                     </div>
                     <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
                       <p className="text-xs text-gray-600 mb-1">Minimum</p>

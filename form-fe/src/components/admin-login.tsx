@@ -26,11 +26,11 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center px-4" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-cyan-50 to-indigo-50 flex items-center justify-center px-4" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
       <div className="w-full max-w-md animate-fade-in">
         <div className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
           {/* Header with gradient */}
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-10">
+          <div className="bg-gradient-to-r from-cyan-600 to-cyan-600 px-8 py-10">
             <div className="flex items-center justify-center gap-3 mb-2">
               <div className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +54,7 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter admin password"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
                     autoFocus
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -76,7 +76,7 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl py-3 font-semibold"
+                className="w-full bg-gradient-to-r from-cyan-600 to-cyan-600 text-white hover:from-cyan-700 hover:to-cyan-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl py-3 font-semibold"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">

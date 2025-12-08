@@ -202,15 +202,15 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
         @keyframes slideMove {
           0% {
             transform: translateY(0) scale(1);
-            box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.4);
+            box-shadow: 0 0 0 0 rgba(0, 204, 231, 0.4);
           }
           50% {
             transform: translateY(0) scale(1.05);
-            box-shadow: 0 0 20px 5px rgba(147, 51, 234, 0.6);
+            box-shadow: 0 0 20px 5px rgba(0, 204, 231, 0.6);
           }
           100% {
             transform: translateY(0) scale(1);
-            box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+            box-shadow: 0 0 0 0 rgba(0, 204, 231, 0);
           }
         }
       `}</style>
@@ -229,7 +229,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
       {/* Form Title & Description */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+        <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
             <span>⚙️</span>
             Form Configuration
@@ -242,7 +242,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
               placeholder="Enter form title"
             />
           </div>
@@ -252,7 +252,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 resize-none transition-all duration-200"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 resize-none transition-all duration-200"
               placeholder="Enter form description"
             />
           </div>
@@ -261,7 +261,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
       {/* Current Fields */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+        <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
             <span>📝</span>
             Current Fields
@@ -291,12 +291,12 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                   onDragEnd={handleDragEnd}
                   className={`flex items-center justify-between p-4 border-2 rounded-lg transition-all duration-500 ease-in-out cursor-move ${
                     movingFieldId === field.id
-                      ? 'border-purple-500 bg-purple-100 shadow-lg scale-105 transform'
+                      ? 'border-[#00CCE7] bg-cyan-100 shadow-lg scale-105 transform'
                       : draggedIndex === index
-                      ? 'opacity-50 border-purple-500 bg-purple-100'
+                      ? 'opacity-50 border-[#00CCE7] bg-cyan-100'
                       : dragOverIndex === index
-                      ? 'border-purple-500 bg-purple-100 scale-105 shadow-lg'
-                      : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50/50'
+                      ? 'border-[#00CCE7] bg-cyan-100 scale-105 shadow-lg'
+                      : 'border-gray-200 hover:border-cyan-300 hover:bg-cyan-50/50'
                   }`}
                   style={{
                     animation: movingFieldId === field.id ? 'slideMove 0.5s ease-in-out' : 'none'
@@ -304,7 +304,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                 >
                   <div className="flex items-center gap-3 flex-1">
                     {/* Drag Handle Icon */}
-                    <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing hover:text-purple-500 transition-colors">
+                    <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing hover:text-[#00CCE7] transition-colors">
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M7 2a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM7 8a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM7 14a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM13 2a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM13 8a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM13 14a2 2 0 1 1 0 4a2 2 0 0 1 0-4z" />
                       </svg>
@@ -318,12 +318,12 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                         className={`w-8 h-8 rounded-lg border-2 transition-all duration-300 flex items-center justify-center relative overflow-hidden group ${
                           index === 0
                             ? 'border-gray-200 bg-gray-100 text-gray-300 cursor-not-allowed'
-                            : 'border-purple-200 bg-purple-50 text-purple-600 hover:bg-purple-100 hover:border-purple-400 hover:scale-125 hover:shadow-lg active:scale-95'
+                            : 'border-cyan-200 bg-cyan-50 text-[#00CCE7] hover:bg-cyan-100 hover:border-[#01C0DC] hover:scale-125 hover:shadow-lg active:scale-95'
                         }`}
                         title="Move up"
                       >
                         {index !== 0 && (
-                          <span className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                          <span className="absolute inset-0 bg-gradient-to-br from-[#00CCE7] to-[#01C0DC] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                         )}
                         <svg 
                           className={`w-4 h-4 relative z-10 transition-transform duration-300 ${
@@ -336,7 +336,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                         </svg>
                         {index !== 0 && (
-                          <span className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-30 bg-purple-400 rounded-lg"></span>
+                          <span className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-30 bg-[#00CCE7] rounded-lg"></span>
                         )}
                       </button>
                       <button
@@ -345,12 +345,12 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                         className={`w-8 h-8 rounded-lg border-2 transition-all duration-300 flex items-center justify-center relative overflow-hidden group ${
                           index === fields.length - 1
                             ? 'border-gray-200 bg-gray-100 text-gray-300 cursor-not-allowed'
-                            : 'border-purple-200 bg-purple-50 text-purple-600 hover:bg-purple-100 hover:border-purple-400 hover:scale-125 hover:shadow-lg active:scale-95'
+                            : 'border-cyan-200 bg-cyan-50 text-[#00CCE7] hover:bg-cyan-100 hover:border-[#01C0DC] hover:scale-125 hover:shadow-lg active:scale-95'
                         }`}
                         title="Move down"
                       >
                         {index !== fields.length - 1 && (
-                          <span className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                          <span className="absolute inset-0 bg-gradient-to-br from-[#00CCE7] to-[#01C0DC] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                         )}
                         <svg 
                           className={`w-4 h-4 relative z-10 transition-transform duration-300 ${
@@ -363,7 +363,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                         {index !== fields.length - 1 && (
-                          <span className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-30 bg-purple-400 rounded-lg"></span>
+                          <span className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-30 bg-[#00CCE7] rounded-lg"></span>
                         )}
                       </button>
                     </div>
@@ -408,7 +408,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
       {/* Add New Field */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+        <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
             <span>➕</span>
             Add New Field
@@ -423,7 +423,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                 value={newField.name || ''}
                 onChange={(e) => setNewField({ ...newField, name: e.target.value })}
                 placeholder="e.g., company_name"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
               />
             </div>
             <div>
@@ -433,7 +433,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                 value={newField.label || ''}
                 onChange={(e) => setNewField({ ...newField, label: e.target.value })}
                 placeholder="e.g., Company Name"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
               />
             </div>
             <div>
@@ -441,7 +441,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               <select
                 value={newField.type || 'text'}
                 onChange={(e) => handleTypeChange(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
               >
                 <option value="text">Text</option>
                 <option value="email">Email</option>
@@ -457,7 +457,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               <select
                 value={newField.required ? 'yes' : 'no'}
                 onChange={(e) => setNewField({ ...newField, required: e.target.value === 'yes' })}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
               >
                 <option value="no">No</option>
                 <option value="yes">Yes</option>
@@ -472,7 +472,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               value={newField.placeholder || ''}
               onChange={(e) => setNewField({ ...newField, placeholder: e.target.value })}
               placeholder="e.g., Enter text here..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:bg-white focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
             />
           </div>
 
@@ -482,9 +482,9 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
               <div className="space-y-2">
                 {Array.isArray(newField.options) && newField.options.length > 0 ? (
                   newField.options.map((option, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg bg-gray-50 hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200">
+                    <div key={index} className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg bg-gray-50 hover:border-cyan-300 hover:bg-cyan-50/50 transition-all duration-200">
                       {/* Angka urutan di kiri */}
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-md flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00CCE7] to-[#01C0DC] flex items-center justify-center text-white font-semibold text-sm shadow-md flex-shrink-0">
                         {index + 1}
                       </div>
                       
@@ -498,7 +498,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                           setNewField({ ...newField, options: updatedOptions });
                         }}
                         placeholder={`Option ${index + 1}`}
-                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
                       />
                       
                       {/* Tombol tambah dan kurang di kanan */}
@@ -511,7 +511,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                             updatedOptions.splice(index + 1, 0, '');
                             setNewField({ ...newField, options: updatedOptions });
                           }}
-                          className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 transition-all duration-200 flex items-center justify-center group"
+                          className="w-8 h-8 rounded-lg bg-cyan-50 text-[#00CCE7] border-2 border-cyan-200 hover:bg-cyan-100 hover:border-cyan-300 transition-all duration-200 flex items-center justify-center group"
                           title="Tambah opsi setelah ini"
                         >
                           <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
@@ -542,7 +542,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                 ) : (
                   <div className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg bg-gray-50">
                     {/* Angka urutan di kiri */}
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm shadow-md flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00CCE7] to-[#01C0DC] flex items-center justify-center text-white font-semibold text-sm shadow-md flex-shrink-0">
                       1
                     </div>
                     
@@ -554,7 +554,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                         setNewField({ ...newField, options: [e.target.value] });
                       }}
                       placeholder="Option 1"
-                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#00CCE7] focus:ring-2 focus:ring-cyan-200 transition-all duration-200"
                     />
                     
                     {/* Tombol tambah di kanan */}
@@ -564,7 +564,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                         onClick={() => {
                           setNewField({ ...newField, options: ['', ''] });
                         }}
-                        className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 transition-all duration-200 flex items-center justify-center group"
+                        className="w-8 h-8 rounded-lg bg-cyan-50 text-[#00CCE7] border-2 border-cyan-200 hover:bg-cyan-100 hover:border-cyan-300 transition-all duration-200 flex items-center justify-center group"
                         title="Tambah opsi"
                       >
                         <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
@@ -580,7 +580,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
           <button
             onClick={handleAddField}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl py-3 font-semibold flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-[#00CCE7] to-[#01C0DC] text-white hover:from-[#00B8D4] hover:to-[#00A8C5] rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl py-3 font-semibold flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -593,7 +593,7 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
       {/* Save Button */}
       <button
         onClick={handleSave}
-        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl py-4 text-lg font-semibold flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-[#00CCE7] to-[#01C0DC] text-white hover:from-[#00B8D4] hover:to-[#00A8C5] rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl py-4 text-lg font-semibold flex items-center justify-center gap-2"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

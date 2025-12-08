@@ -139,7 +139,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
               className={`w-full px-3 py-2.5 border-2 rounded-lg bg-gray-50 text-[#202124] placeholder:text-gray-400 focus:outline-none focus:bg-white focus:ring-2 transition-all duration-200 ${
                 hasError
                   ? 'border-red-400 focus:border-red-500 focus:ring-red-200'
-                  : 'border-gray-200 focus:border-purple-500 focus:ring-purple-200'
+                  : 'border-gray-200 focus:border-cyan-500 focus:ring-cyan-200'
               }`}
               style={{ fontSize: '15px', lineHeight: '22px', minHeight: '44px' }}
             />
@@ -168,7 +168,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
               className={`w-full px-3 py-2.5 border-2 rounded-lg bg-gray-50 text-[#202124] placeholder:text-gray-400 focus:outline-none focus:bg-white focus:ring-2 resize-none transition-all duration-200 ${
                 hasError
                   ? 'border-red-400 focus:border-red-500 focus:ring-red-200'
-                  : 'border-gray-200 focus:border-purple-500 focus:ring-purple-200'
+                  : 'border-gray-200 focus:border-cyan-500 focus:ring-cyan-200'
               }`}
               style={{ fontSize: '15px', lineHeight: '22px', minHeight: '100px' }}
             />
@@ -196,7 +196,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                 className={`w-full px-3 py-2.5 border-2 rounded-lg bg-gray-50 text-[#202124] focus:outline-none focus:bg-white focus:ring-2 appearance-none cursor-pointer transition-all duration-200 ${
                   hasError
                     ? 'border-red-400 focus:border-red-500 focus:ring-red-200'
-                    : 'border-gray-200 focus:border-purple-500 focus:ring-purple-200'
+                    : 'border-gray-200 focus:border-cyan-500 focus:ring-cyan-200'
                 }`}
                 style={{ fontSize: '15px', lineHeight: '22px', minHeight: '44px' }}
               >
@@ -244,10 +244,10 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                     key={optionId} 
                     className={`flex items-start gap-3 cursor-pointer group p-4 rounded-xl border-2 transition-all duration-200 ${
                       isChecked 
-                        ? 'bg-gradient-to-r from-purple-50 to-blue-50 border-purple-300 shadow-sm' 
+                        ? 'bg-gradient-to-r from-cyan-50 to-cyan-50 border-cyan-300 shadow-sm' 
                         : hasError
                         ? 'bg-red-50 border-red-300'
-                        : 'bg-gray-50 border-gray-200 hover:border-purple-200 hover:bg-purple-50/50'
+                        : 'bg-gray-50 border-gray-200 hover:border-cyan-200 hover:bg-cyan-50/50'
                     }`}
                   >
                     <div className="relative flex-shrink-0 mt-0.5">
@@ -272,8 +272,8 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                       />
                       <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${
                         isChecked
-                          ? 'bg-gradient-to-br from-purple-600 to-blue-600 border-purple-600 shadow-md'
-                          : 'bg-white border-gray-300 group-hover:border-purple-400'
+                          ? 'bg-gradient-to-br from-cyan-600 to-cyan-600 border-cyan-600 shadow-md'
+                          : 'bg-white border-gray-300 group-hover:border-cyan-400'
                       }`}>
                         {isChecked && (
                           <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
@@ -282,7 +282,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                         )}
                       </div>
                     </div>
-                    <span className={`flex-1 transition-colors font-medium ${isChecked ? 'text-purple-700' : hasError ? 'text-red-700' : 'text-[#202124] group-hover:text-purple-600'}`} style={{ fontSize: '15px', lineHeight: '22px' }}>
+                    <span className={`flex-1 transition-colors font-medium ${isChecked ? 'text-[#00CCE7]-700' : hasError ? 'text-red-700' : 'text-[#202124] group-hover:text-[#00CCE7]-600'}`} style={{ fontSize: '15px', lineHeight: '22px' }}>
                       {option}
                     </span>
                   </label>
@@ -291,10 +291,10 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
             ) : (
               <label className={`flex items-center gap-3 cursor-pointer group p-4 rounded-xl border-2 transition-all duration-200 ${
                 value === true
-                  ? 'bg-gradient-to-r from-purple-50 to-blue-50 border-purple-300 shadow-sm'
+                  ? 'bg-gradient-to-r from-cyan-50 to-cyan-50 border-cyan-300 shadow-sm'
                   : hasError
                   ? 'bg-red-50 border-red-300'
-                  : 'bg-gray-50 border-gray-200 hover:border-purple-200 hover:bg-purple-50/50'
+                  : 'bg-gray-50 border-gray-200 hover:border-cyan-200 hover:bg-cyan-50/50'
               }`}>
                 <div className="relative flex-shrink-0">
                   <input
@@ -306,10 +306,10 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                   />
                   <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${
                     value === true
-                      ? 'bg-gradient-to-br from-purple-600 to-blue-600 border-purple-600 shadow-md'
+                      ? 'bg-gradient-to-br from-cyan-600 to-cyan-600 border-cyan-600 shadow-md'
                       : hasError
                       ? 'bg-white border-red-400'
-                      : 'bg-white border-gray-300 group-hover:border-purple-400'
+                      : 'bg-white border-gray-300 group-hover:border-cyan-400'
                   }`}>
                     {value === true && (
                       <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
@@ -318,7 +318,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                     )}
                   </div>
                 </div>
-                <span className={`flex-1 transition-colors font-medium ${value === true ? 'text-purple-700' : hasError ? 'text-red-700' : 'text-[#202124] group-hover:text-purple-600'}`} style={{ fontSize: '15px', lineHeight: '22px' }}>
+                <span className={`flex-1 transition-colors font-medium ${value === true ? 'text-[#00CCE7]-700' : hasError ? 'text-red-700' : 'text-[#202124] group-hover:text-[#00CCE7]-600'}`} style={{ fontSize: '15px', lineHeight: '22px' }}>
                   {field.label}
                 </span>
               </label>
@@ -348,10 +348,10 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                   key={optionId} 
                   className={`flex items-start gap-3 cursor-pointer group p-4 rounded-xl border-2 transition-all duration-200 ${
                     isChecked
-                      ? 'bg-gradient-to-r from-purple-50 to-blue-50 border-purple-300 shadow-sm'
+                      ? 'bg-gradient-to-r from-cyan-50 to-cyan-50 border-cyan-300 shadow-sm'
                       : hasError
                       ? 'bg-red-50 border-red-300'
-                      : 'bg-gray-50 border-gray-200 hover:border-purple-200 hover:bg-purple-50/50'
+                      : 'bg-gray-50 border-gray-200 hover:border-cyan-200 hover:bg-cyan-50/50'
                   }`}
                 >
                   <div className="relative flex-shrink-0 mt-0.5">
@@ -365,17 +365,17 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
                     />
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
                       isChecked
-                        ? 'border-purple-600'
+                        ? 'border-cyan-600'
                         : hasError
                         ? 'bg-white border-red-400'
-                        : 'bg-white border-gray-300 group-hover:border-purple-400'
+                        : 'bg-white border-gray-300 group-hover:border-cyan-400'
                     }`}>
                       {isChecked && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 shadow-sm"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-cyan-600 to-cyan-600 shadow-sm"></div>
                       )}
                     </div>
                   </div>
-                  <span className={`flex-1 transition-colors font-medium ${isChecked ? 'text-purple-700' : hasError ? 'text-red-700' : 'text-[#202124] group-hover:text-purple-600'}`} style={{ fontSize: '15px', lineHeight: '22px' }}>
+                  <span className={`flex-1 transition-colors font-medium ${isChecked ? 'text-[#00CCE7]-700' : hasError ? 'text-red-700' : 'text-[#202124] group-hover:text-[#00CCE7]-600'}`} style={{ fontSize: '15px', lineHeight: '22px' }}>
                     {option}
                   </span>
                 </label>
@@ -422,14 +422,14 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
     <div className="w-full animate-fade-in" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
       {/* Header Card - Enhanced Design */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 mb-6 transform transition-all duration-300 hover:shadow-xl">
-        <div className="px-8 py-10 bg-gradient-to-r from-purple-50 to-blue-50 rounded-t-xl">
+        <div className="px-8 py-10 bg-gradient-to-r from-cyan-50 to-cyan-50 rounded-t-xl">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-500 flex items-center justify-center shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '28px', fontWeight: 500 }}>
+            <h1 className="text-3xl font-semibold bg-gradient-to-r from-cyan-600 to-cyan-600 bg-clip-text text-transparent" style={{ fontSize: '28px', fontWeight: 500 }}>
               {config.title || 'Untitled Form'}
             </h1>
             {config.isPrimary && (
@@ -457,7 +457,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
             >
               <div className="mb-4">
                 <label className="flex items-center gap-2 text-sm font-medium text-[#202124]" style={{ fontSize: '15px', fontWeight: 500, lineHeight: '22px' }}>
-                  <span className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center text-xs font-semibold text-purple-600 flex-shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-100 flex items-center justify-center text-xs font-semibold text-[#00CCE7]-600 flex-shrink-0">
                     {index + 1}
                   </span>
                   <span className="flex items-center gap-2">
@@ -481,7 +481,7 @@ export function DynamicForm({ config, onSuccess }: DynamicFormProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-300 focus:ring-offset-2 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+              className="bg-gradient-to-r from-cyan-600 to-cyan-600 text-white hover:from-cyan-700 hover:to-cyan-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:ring-offset-2 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
               style={{ 
                 fontSize: '15px', 
                 fontWeight: 600, 

@@ -121,16 +121,16 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
-      <div className="px-6 py-5 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+      <div className="px-6 py-5 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-500 flex items-center justify-center shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent" style={{ fontSize: '20px', fontWeight: 600 }}>
+              <h2 className="text-xl font-semibold bg-gradient-to-r from-cyan-600 to-cyan-600 bg-clip-text text-transparent" style={{ fontSize: '20px', fontWeight: 600 }}>
                 All Form Responses ({filteredResponses.length})
                 {config && (
                   <span className="ml-2 text-sm font-normal text-gray-600">
@@ -166,8 +166,8 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
       <div className="p-6">
         {filteredResponses.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
-              <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-100 flex items-center justify-center">
+              <svg className="w-8 h-8 text-[#00CCE7]-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
@@ -200,12 +200,12 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                 {filteredResponses.map((response, index) => (
                   <tr 
                     key={response.id} 
-                    className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-200"
+                    className="hover:bg-gradient-to-r hover:from-cyan-50 hover:to-cyan-50 transition-all duration-200"
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
-                    <td className="py-4 px-4 text-gray-900 font-medium sticky left-0 bg-white z-10 border-r border-gray-100 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50" style={{ fontSize: '14px', fontWeight: 500 }}>
+                    <td className="py-4 px-4 text-gray-900 font-medium sticky left-0 bg-white z-10 border-r border-gray-100 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-cyan-50" style={{ fontSize: '14px', fontWeight: 500 }}>
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center text-xs font-semibold text-purple-600 flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-100 flex items-center justify-center text-xs font-semibold text-[#00CCE7]-600 flex-shrink-0">
                           {index + 1}
                         </div>
                         <span>{response.email || '-'}</span>
@@ -219,7 +219,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                               {response.data[fieldName].map((item: string, idx: number) => (
                                 <span
                                   key={idx}
-                                  className="inline-flex items-center px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 text-xs font-medium border border-purple-200 shadow-sm"
+                                  className="inline-flex items-center px-2.5 py-1 rounded-lg bg-gradient-to-r from-cyan-100 to-cyan-100 text-[#00CCE7]-700 text-xs font-medium border border-purple-200 shadow-sm"
                                 >
                                   {item}
                                 </span>
@@ -245,7 +245,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                     ))}
                     <td className="py-4 px-4 text-gray-600" style={{ fontSize: '13px' }}>
                       <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-[#00CCE7]-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>
@@ -272,7 +272,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
         <div className="px-6 pb-6 pt-0">
           <div className="mt-6 pt-6 border-t border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-[#00CCE7]-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Detail Responses
@@ -284,10 +284,10 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                   className="bg-gradient-to-br from-white to-purple-50/30 rounded-xl border-2 border-gray-200 hover:border-purple-300 shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden"
                 >
                   {/* Card Header */}
-                  <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-blue-50 border-b border-gray-200">
+                  <div className="px-6 py-4 bg-gradient-to-r from-cyan-50 to-cyan-50 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold shadow-md">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-500 flex items-center justify-center text-white font-semibold shadow-md">
                           {index + 1}
                         </div>
                         <div>
@@ -300,7 +300,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-[#00CCE7]-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>
@@ -330,8 +330,8 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                             className="bg-white rounded-lg border border-gray-200 p-4 hover:border-purple-200 hover:shadow-sm transition-all duration-200"
                           >
                             <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center flex-shrink-0">
-                                <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-100 to-cyan-100 flex items-center justify-center flex-shrink-0">
+                                <svg className="w-4 h-4 text-[#00CCE7]-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                 </svg>
                               </div>
@@ -347,7 +347,7 @@ export default function ResponsesTable({ responses, config }: ResponsesTableProp
                                       {fieldValue.map((item: string, idx: number) => (
                                         <span
                                           key={idx}
-                                          className="inline-flex items-center px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 text-sm font-medium border border-purple-200 shadow-sm"
+                                          className="inline-flex items-center px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-100 to-cyan-100 text-[#00CCE7]-700 text-sm font-medium border border-purple-200 shadow-sm"
                                         >
                                           {item}
                                         </span>

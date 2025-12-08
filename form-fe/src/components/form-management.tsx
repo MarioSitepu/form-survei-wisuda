@@ -174,7 +174,7 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-cyan-200 border-t-purple-600 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -208,7 +208,7 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
         </div>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
+          className="px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-600 text-white rounded-lg hover:from-cyan-700 hover:to-cyan-700 transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -219,9 +219,9 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
 
       {/* Create Form Form */}
       {showCreateForm && (
-        <div className="bg-white rounded-xl shadow-lg border-2 border-purple-200 p-6 animate-fade-in">
+        <div className="bg-white rounded-xl shadow-lg border-2 border-cyan-200 p-6 animate-fade-in">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-500 flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
@@ -239,7 +239,7 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
                 onChange={(e) => setNewFormTitle(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Contoh: Survey Kepuasan Pelanggan"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all"
                 disabled={isCreating}
               />
             </div>
@@ -253,7 +253,7 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
                 onKeyPress={handleKeyPress}
                 placeholder="Masukkan deskripsi form yang akan ditampilkan kepada pengguna"
                 rows={3}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all resize-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all resize-none"
                 disabled={isCreating}
               />
             </div>
@@ -269,7 +269,7 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
               <button
                 onClick={handleCreateForm}
                 disabled={isCreating || !newFormTitle.trim()}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-cyan-600 text-white rounded-lg hover:from-cyan-700 hover:to-cyan-700 transition-all duration-200 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
               >
                 {isCreating ? (
                   <>
@@ -311,7 +311,7 @@ export default function FormManagement({ onUpdate, autoShowCreate = false }: For
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-purple-50 to-blue-50">
+            <thead className="bg-gradient-to-r from-cyan-50 to-cyan-50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Form
