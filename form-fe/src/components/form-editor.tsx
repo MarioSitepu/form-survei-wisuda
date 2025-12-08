@@ -11,6 +11,9 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
   const [description, setDescription] = useState(config.description);
   const [fields, setFields] = useState<FormField[]>(config.fields);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [movingFieldId, setMovingFieldId] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [newField, setNewField] = useState<Partial<FormField>>({
     type: 'text',
     required: false,
@@ -77,6 +80,95 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
     }
   };
 
+  // Move field up/down handlers with animation
+  const handleMoveUp = (index: number) => {
+    if (index === 0) return; // Already at top
+    const newFields = [...fields];
+    const fieldId = newFields[index].id;
+    
+    // Set moving field for animation
+    setMovingFieldId(fieldId);
+    
+    // Swap fields
+    [newFields[index - 1], newFields[index]] = [newFields[index], newFields[index - 1]];
+    setFields(newFields);
+    
+    // Clear animation after transition
+    setTimeout(() => {
+      setMovingFieldId(null);
+    }, 500);
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index === fields.length - 1) return; // Already at bottom
+    const newFields = [...fields];
+    const fieldId = newFields[index].id;
+    
+    // Set moving field for animation
+    setMovingFieldId(fieldId);
+    
+    // Swap fields
+    [newFields[index], newFields[index + 1]] = [newFields[index + 1], newFields[index]];
+    setFields(newFields);
+    
+    // Clear animation after transition
+    setTimeout(() => {
+      setMovingFieldId(null);
+    }, 500);
+  };
+
+  // Drag and Drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+    const fieldId = fields[index].id;
+    setMovingFieldId(fieldId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      setMovingFieldId(null);
+      return;
+    }
+
+    const newFields = [...fields];
+    const draggedField = newFields[draggedIndex];
+    
+    // Remove dragged field from its current position
+    newFields.splice(draggedIndex, 1);
+    
+    // Insert at new position
+    newFields.splice(dropIndex, 0, draggedField);
+    
+    setFields(newFields);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    
+    // Clear animation after transition
+    setTimeout(() => {
+      setMovingFieldId(null);
+    }, 500);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setMovingFieldId(null);
+  };
+
   const handleSave = async () => {
     try {
       const updatedConfig: Partial<FormConfig> = {
@@ -106,6 +198,22 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'Roboto, Arial, sans-serif' }}>
+      <style>{`
+        @keyframes slideMove {
+          0% {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.4);
+          }
+          50% {
+            transform: translateY(0) scale(1.05);
+            box-shadow: 0 0 20px 5px rgba(147, 51, 234, 0.6);
+          }
+          100% {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+          }
+        }
+      `}</style>
       {showSuccess && (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl shadow-lg border-2 border-green-200 p-6">
           <div className="flex items-center gap-3">
@@ -172,23 +280,117 @@ export default function FormEditor({ config, onUpdate }: FormEditorProps) {
                 <p className="text-sm text-gray-400 mt-1">Add fields using the form below</p>
               </div>
             ) : (
-              fields.map((field) => (
-                <div key={field.id} className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200">
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900 mb-1">{field.label}</p>
-                    <div className="flex items-center gap-3 text-sm text-gray-600">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-md font-medium">
-                        {field.type}
-                      </span>
-                      {field.required && (
-                        <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-md font-medium">
-                          Required
+              fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, index)}
+                  onDragEnd={handleDragEnd}
+                  className={`flex items-center justify-between p-4 border-2 rounded-lg transition-all duration-500 ease-in-out cursor-move ${
+                    movingFieldId === field.id
+                      ? 'border-purple-500 bg-purple-100 shadow-lg scale-105 transform'
+                      : draggedIndex === index
+                      ? 'opacity-50 border-purple-500 bg-purple-100'
+                      : dragOverIndex === index
+                      ? 'border-purple-500 bg-purple-100 scale-105 shadow-lg'
+                      : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50/50'
+                  }`}
+                  style={{
+                    animation: movingFieldId === field.id ? 'slideMove 0.5s ease-in-out' : 'none'
+                  }}
+                >
+                  <div className="flex items-center gap-3 flex-1">
+                    {/* Drag Handle Icon */}
+                    <div className="flex flex-col gap-1 text-gray-400 cursor-grab active:cursor-grabbing hover:text-purple-500 transition-colors">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M7 2a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM7 8a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM7 14a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM13 2a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM13 8a2 2 0 1 1 0 4a2 2 0 0 1 0-4zM13 14a2 2 0 1 1 0 4a2 2 0 0 1 0-4z" />
+                      </svg>
+                    </div>
+                    
+                    {/* Up/Down Buttons */}
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => handleMoveUp(index)}
+                        disabled={index === 0}
+                        className={`w-8 h-8 rounded-lg border-2 transition-all duration-300 flex items-center justify-center relative overflow-hidden group ${
+                          index === 0
+                            ? 'border-gray-200 bg-gray-100 text-gray-300 cursor-not-allowed'
+                            : 'border-purple-200 bg-purple-50 text-purple-600 hover:bg-purple-100 hover:border-purple-400 hover:scale-125 hover:shadow-lg active:scale-95'
+                        }`}
+                        title="Move up"
+                      >
+                        {index !== 0 && (
+                          <span className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                        )}
+                        <svg 
+                          className={`w-4 h-4 relative z-10 transition-transform duration-300 ${
+                            index !== 0 ? 'group-hover:scale-125 group-hover:-translate-y-0.5' : ''
+                          }`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                        {index !== 0 && (
+                          <span className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-30 bg-purple-400 rounded-lg"></span>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleMoveDown(index)}
+                        disabled={index === fields.length - 1}
+                        className={`w-8 h-8 rounded-lg border-2 transition-all duration-300 flex items-center justify-center relative overflow-hidden group ${
+                          index === fields.length - 1
+                            ? 'border-gray-200 bg-gray-100 text-gray-300 cursor-not-allowed'
+                            : 'border-purple-200 bg-purple-50 text-purple-600 hover:bg-purple-100 hover:border-purple-400 hover:scale-125 hover:shadow-lg active:scale-95'
+                        }`}
+                        title="Move down"
+                      >
+                        {index !== fields.length - 1 && (
+                          <span className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                        )}
+                        <svg 
+                          className={`w-4 h-4 relative z-10 transition-transform duration-300 ${
+                            index !== fields.length - 1 ? 'group-hover:scale-125 group-hover:translate-y-0.5' : ''
+                          }`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {index !== fields.length - 1 && (
+                          <span className="absolute inset-0 animate-ping opacity-0 group-hover:opacity-30 bg-purple-400 rounded-lg"></span>
+                        )}
+                      </button>
+                    </div>
+                    
+                    {/* Field Info */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold text-gray-900">{field.label}</p>
+                        <span className="text-xs text-gray-400">#{index + 1}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-600">
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-md font-medium">
+                          {field.type}
                         </span>
-                      )}
+                        {field.required && (
+                          <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-md font-medium">
+                            Required
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Delete Button */}
                   <button
                     onClick={() => handleDeleteField(field.id)}
+                    onMouseDown={(e) => e.stopPropagation()}
                     className="ml-4 px-4 py-2 bg-red-50 text-red-600 border-2 border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200 font-medium flex items-center gap-2 group"
                     title="Delete this field"
                   >
